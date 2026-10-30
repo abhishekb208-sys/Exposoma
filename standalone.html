@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ChemBody Explorer</title>
+<style>
+:root {
+  --bg: #080c18;
+  --bg-2: #0d1526;
+  --panel: rgba(255, 255, 255, 0.04);
+  --panel-border: rgba(255, 255, 255, 0.09);
+  --text: #e9f0fb;
+  --muted: #8ea0bd;
+  --accent: #4da3ff;
+  --accent-2: #7a5cff;
+  --high: #ff4d4d;
+  --medium: #ffa033;
+  --low: #ffe14d;
+  --radius: 14px;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 700px at 78% -8%, rgba(122, 92, 255, 0.18), transparent 55%),
+    radial-gradient(1000px 650px at 8% 108%, rgba(77, 163, 255, 0.16), transparent 55%),
+    linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 100%);
+  overflow: hidden;
+}
+
+body { display: flex; flex-direction: column; }
+
+/* Top bar */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--panel-border);
+  backdrop-filter: blur(8px);
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.brand-mark {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: grid; place-items: center;
+  font-size: 22px; color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 20px rgba(77, 163, 255, 0.4);
+}
+.topbar h1 { font-size: 19px; margin: 0; letter-spacing: 0.3px; }
+.tagline { margin: 2px 0 0; font-size: 12.5px; color: var(--muted); }
+.disclaimer-badge {
+  font-size: 11.5px; color: var(--muted);
+  border: 1px solid var(--panel-border); border-radius: 999px;
+  padding: 6px 12px; background: var(--panel);
+}
+
+/* Layout */
+.layout {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 16px;
+  padding: 16px;
+  min-height: 0;
+}
+
+.sidebar {
+  display: flex; flex-direction: column; gap: 14px;
+  min-height: 0;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 14px;
+}
+.panel.grow { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+.field-label {
+  display: block;
+  font-size: 11.5px; letter-spacing: 0.6px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.count { color: var(--accent); text-transform: none; letter-spacing: 0; }
+
+/* Search */
+.search-wrap { position: relative; }
+#search, #age, #gender {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+#search:focus, #age:focus, #gender:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.18);
+}
+.suggestions {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: #0e1626; border: 1px solid var(--panel-border);
+  border-radius: 10px; box-shadow: var(--shadow);
+  max-height: 280px; overflow-y: auto; z-index: 20;
+}
+.suggestion {
+  padding: 10px 12px; cursor: pointer; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.suggestion:last-child { border-bottom: none; }
+.suggestion:hover, .suggestion.active { background: rgba(77,163,255,0.14); }
+.suggestion .s-name { font-size: 13.5px; }
+.suggestion .s-alias { font-size: 11.5px; color: var(--muted); }
+
+/* Fields */
+.field-row { display: flex; gap: 12px; }
+.field { flex: 1; }
+.age-input { display: flex; align-items: center; gap: 8px; }
+.age-input input { flex: 1; }
+.age-band {
+  font-size: 11.5px; color: var(--accent);
+  background: rgba(77,163,255,0.12); border-radius: 8px; padding: 6px 8px; white-space: nowrap;
+}
+
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1px solid var(--panel-border); background: rgba(0,0,0,0.2);
+  color: var(--text); border-radius: 999px; padding: 7px 13px;
+  font-size: 12.5px; cursor: pointer; transition: all 0.15s;
+}
+.chip:hover { border-color: var(--accent); }
+.chip.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  border-color: transparent; color: #fff; font-weight: 600;
+}
+
+/* Library */
+.browse-list { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; }
+.browse-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 9px 11px; border-radius: 10px; cursor: pointer;
+  border: 1px solid transparent; background: rgba(255,255,255,0.03);
+}
+.browse-item:hover { border-color: var(--panel-border); background: rgba(77,163,255,0.1); }
+.browse-item.active { border-color: var(--accent); background: rgba(77,163,255,0.16); }
+.browse-item .b-name { font-size: 13.5px; }
+.type-tag {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--muted); border: 1px solid var(--panel-border);
+  border-radius: 6px; padding: 3px 6px;
+}
+
+/* Stage */
+.stage {
+  display: flex; flex-direction: column; gap: 14px; min-height: 0;
+}
+.stage-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.substance-title h2 { margin: 0; font-size: 22px; }
+.substance-title .sub-aliases { margin: 4px 0 0; font-size: 12.5px; color: var(--muted); }
+.substance-title .sub-summary { margin: 8px 0 0; font-size: 13.5px; color: #c6d3e8; max-width: 760px; line-height: 1.5; }
+.muted { color: var(--muted); }
+
+.cat-chip {
+  display: inline-block; margin-top: 8px;
+  font-size: 11.5px; color: var(--accent);
+  background: rgba(77,163,255,0.12); border-radius: 999px; padding: 4px 10px;
+}
+
+.ghost-btn {
+  background: var(--panel); border: 1px solid var(--panel-border);
+  color: var(--text); border-radius: 10px; padding: 9px 13px;
+  cursor: pointer; font-size: 13px; white-space: nowrap;
+}
+.ghost-btn:hover { border-color: var(--accent); }
+
+/* Viewport */
+.viewport {
+  position: relative;
+  flex: 1; min-height: 280px;
+  border-radius: var(--radius);
+  border: 1px solid var(--panel-border);
+  background:
+    radial-gradient(600px 500px at 50% 35%, rgba(77,163,255,0.1), transparent 70%),
+    linear-gradient(180deg, rgba(10,16,32,0.6), rgba(6,10,22,0.9));
+  overflow: hidden;
+}
+.viewport canvas { display: block; }
+.legend {
+  position: absolute; top: 12px; left: 12px; z-index: 5;
+  display: flex; align-items: center; gap: 16px;
+  font-size: 12px; color: var(--muted);
+  background: rgba(8,12,24,0.6); border: 1px solid var(--panel-border);
+  border-radius: 10px; padding: 8px 12px; backdrop-filter: blur(6px);
+}
+.legend .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.legend .hint { color: #5f7399; opacity: 0.85; }
+.dot.high { background: var(--high); box-shadow: 0 0 8px var(--high); }
+.dot.medium { background: var(--medium); box-shadow: 0 0 8px var(--medium); }
+.dot.low { background: var(--low); box-shadow: 0 0 8px var(--low); }
+
+.empty-hint {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px;
+  color: var(--muted); text-align: center; padding: 20px;
+}
+.empty-hint .pulse { font-size: 56px; color: var(--accent); animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 0.35; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+
+/* Conclusion */
+.conclusion {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  max-height: 38vh; overflow-y: auto;
+}
+.conclusion h3 { margin: 0 0 4px; font-size: 15px; letter-spacing: 0.3px; }
+.conclusion .scenario-note { margin: 0 0 14px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+.finding {
+  display: grid; grid-template-columns: 6px 1fr; gap: 12px;
+  padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.finding .bar { border-radius: 4px; }
+.finding .bar.high { background: var(--high); }
+.finding .bar.medium { background: var(--medium); }
+.finding .bar.low { background: var(--low); }
+.finding .f-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.finding .f-organ { font-weight: 700; font-size: 14.5px; }
+.finding .tag {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.4px;
+  color: var(--muted); border: 1px solid var(--panel-border);
+  border-radius: 6px; padding: 2px 7px;
+}
+.finding .f-effect { margin: 6px 0 0; font-size: 13.5px; color: #dfe8f6; }
+.finding .f-detail { margin: 6px 0 0; font-size: 13px; color: var(--muted); line-height: 1.55; }
+.finding .f-mod {
+  margin: 8px 0 0; font-size: 12.5px; color: #cdb8ff;
+  background: rgba(122,92,255,0.12); border-left: 3px solid var(--accent-2);
+  padding: 7px 10px; border-radius: 0 8px 8px 0; line-height: 1.5;
+}
+.refs { margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+.refs h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+.refs a { color: var(--accent); text-decoration: none; font-size: 12.5px; }
+.refs a:hover { text-decoration: underline; }
+.refs li { margin-bottom: 5px; line-height: 1.4; }
+.foot-note { margin-top: 14px; font-size: 11.5px; color: var(--muted); font-style: italic; }
+
+.load-errors {
+  position: fixed; bottom: 12px; right: 12px; max-width: 420px;
+  background: rgba(255,77,77,0.12); border: 1px solid var(--high);
+  color: #ffd7d7; border-radius: 10px; padding: 12px 14px; font-size: 12.5px; z-index: 50;
+}
+
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">⬡</div>
+      <div>
+        <h1>ChemBody Explorer</h1>
+        <p class="tagline">How a chemical, vitamin, mineral or biomolecule changes the human body</p>
+      </div>
+    </div>
+    <div class="disclaimer-badge" title="Educational tool">Educational · not medical advice</div>
+  </header>
+
+  <main class="layout">
+    <!-- Controls -->
+    <aside class="sidebar">
+      <section class="panel">
+        <label class="field-label" for="search">Search substance</label>
+        <div class="search-wrap">
+          <input id="search" type="text" autocomplete="off" placeholder="e.g. Vitamin D, Iron, Lead, B12…" />
+          <div id="suggestions" class="suggestions" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="age">Age</label>
+            <div class="age-input">
+              <input id="age" type="number" min="0" max="120" value="30" />
+              <span id="ageBand" class="age-band">Adult</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="gender">Gender</label>
+            <select id="gender">
+              <option value="">Unspecified</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="modePanel" hidden>
+        <label class="field-label">Scenario</label>
+        <div id="modeChips" class="chips"></div>
+      </section>
+
+      <section class="panel grow">
+        <label class="field-label">Library <span id="libCount" class="count"></span></label>
+        <div id="browseList" class="browse-list"></div>
+      </section>
+    </aside>
+
+    <!-- Visualisation + conclusion -->
+    <section class="stage">
+      <div class="stage-head">
+        <div id="substanceTitle" class="substance-title">
+          <h2>Select a substance</h2>
+          <p class="muted">Pick from the library or search, then set age and gender.</p>
+        </div>
+        <button id="resetView" class="ghost-btn" title="Reset camera">⟲ View</button>
+      </div>
+
+      <div id="viewport" class="viewport">
+        <div id="legend" class="legend" hidden>
+          <span><i class="dot high"></i>High impact</span>
+          <span><i class="dot medium"></i>Moderate</span>
+          <span><i class="dot low"></i>Low</span>
+          <span class="hint">drag to rotate · scroll to zoom</span>
+        </div>
+        <div id="emptyHint" class="empty-hint">
+          <div class="pulse">⬡</div>
+          <p>A transparent 3D body will appear here with the affected organs highlighted.</p>
+        </div>
+      </div>
+
+      <div id="conclusion" class="conclusion" hidden></div>
+    </section>
+  </main>
+
+  <div id="loadErrors" class="load-errors" hidden></div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ---- Embedded substance data (generated) ----
+const EMBEDDED_SUBSTANCES = [
+  {
+    "id": "calcium",
+    "name": "Calcium (Ca)",
+    "type": "mineral",
+    "category": "Essential macromineral",
+    "aliases": [
+      "ca",
+      "calcium carbonate",
+      "calcium citrate"
+    ],
+    "casRN": "7440-70-2",
+    "summary": "The most abundant mineral in the body; structural in bone and teeth and essential for muscle contraction, nerve conduction, clotting and enzyme function.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency (hypocalcaemia / dietary)",
+        "description": "Low calcium availability impairs bone mineralisation and raises neuromuscular excitability.",
+        "affects": [
+          {
+            "organ": "skeleton",
+            "system": "Skeletal system",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Reduced bone density; osteoporosis and fracture risk",
+            "detail": "Sustained low intake draws calcium from bone, lowering bone mineral density and increasing fracture risk.",
+            "ageModifiers": {
+              "child": "Inadequate calcium plus vitamin D contributes to rickets and poor peak bone mass.",
+              "elderly": "Accelerates age-related bone loss and fracture risk."
+            },
+            "genderModifiers": {
+              "female": "Post-menopausal oestrogen loss accelerates calcium loss from bone, raising osteoporosis risk."
+            }
+          },
+          {
+            "organ": "muscles",
+            "system": "Neuromuscular",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Tetany, cramps and spasms",
+            "detail": "Low ionised calcium increases neuromuscular excitability, causing cramps, carpopedal spasm and tetany (Chvostek/Trousseau signs)."
+          },
+          {
+            "organ": "heart",
+            "system": "Cardiovascular system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "QT prolongation / arrhythmia",
+            "detail": "Severe hypocalcaemia prolongs the cardiac QT interval and can cause arrhythmia."
+          }
+        ],
+        "references": [
+          {
+            "title": "Calcium — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dietary-protein",
+    "name": "Dietary Protein",
+    "type": "protein",
+    "category": "Macronutrient",
+    "aliases": [
+      "protein",
+      "amino acids",
+      "albumin"
+    ],
+    "summary": "Dietary protein supplies amino acids for tissue structure, enzymes, transport proteins, immune molecules and oncotic pressure. Severe deficiency produces protein-energy malnutrition.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency (protein-energy malnutrition)",
+        "description": "Inadequate protein (kwashiorkor) or combined protein-energy lack (marasmus) damages multiple systems.",
+        "affects": [
+          {
+            "organ": "liver",
+            "system": "Hepatobiliary system",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Fatty liver (hepatic steatosis) in kwashiorkor",
+            "detail": "Impaired lipoprotein export causes fat accumulation and an enlarged, soft liver."
+          },
+          {
+            "organ": "skin",
+            "system": "Integumentary system",
+            "effectType": "morphological",
+            "severity": "medium",
+            "effect": "Oedema, flaky-paint dermatosis, hair depigmentation",
+            "detail": "Low plasma albumin lowers oncotic pressure, causing pitting oedema and ascites; skin and hair changes ('flag sign') appear in kwashiorkor.",
+            "ageModifiers": {
+              "child": "Kwashiorkor typically appears in young children after weaning: oedema, irritability, a distended belly and a reddish tint to the hair."
+            }
+          },
+          {
+            "organ": "muscles",
+            "system": "Muscular system",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Muscle wasting (marasmus)",
+            "detail": "The body catabolises muscle for amino acids and energy, causing severe wasting and loss of subcutaneous fat.",
+            "ageModifiers": {
+              "infant": "Marasmus in infancy produces extreme thinness, an aged ('old man') face and growth failure.",
+              "elderly": "Sarcopenia from inadequate protein worsens frailty, falls and recovery from illness."
+            }
+          },
+          {
+            "organ": "blood",
+            "system": "Immune / haematologic",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Impaired immunity and anaemia",
+            "detail": "Reduced synthesis of immune proteins and haemoglobin raises infection risk and contributes to anaemia."
+          }
+        ],
+        "references": [
+          {
+            "title": "Kwashiorkor (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK507876/"
+          },
+          {
+            "title": "Malnutrition",
+            "source": "World Health Organization",
+            "url": "https://www.who.int/news-room/fact-sheets/detail/malnutrition"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "folate",
+    "name": "Folate (Vitamin B9)",
+    "type": "vitamin",
+    "category": "Water-soluble vitamin",
+    "aliases": [
+      "folic acid",
+      "vitamin b9",
+      "folacin",
+      "b9",
+      "5-mthf"
+    ],
+    "casRN": "59-30-3",
+    "summary": "A water-soluble vitamin essential for one-carbon metabolism, DNA/RNA synthesis and red-cell production; critical in early pregnancy for neural tube closure.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency",
+        "description": "Impairs DNA synthesis (megaloblastic anaemia) and, in early pregnancy, neural tube closure in the fetus.",
+        "affects": [
+          {
+            "organ": "blood",
+            "system": "Haematologic",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Megaloblastic anaemia",
+            "detail": "Like B12 deficiency, impaired DNA synthesis enlarges red cells; unlike B12, folate deficiency does not cause neurological demyelination."
+          },
+          {
+            "organ": "reproductive",
+            "system": "Reproductive / developmental",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Fetal neural tube defects (spina bifida, anencephaly)",
+            "detail": "Deficiency around conception raises the risk of failed neural tube closure in the embryo.",
+            "genderModifiers": {
+              "female": "People who could become pregnant are advised to take ~400 micrograms of folic acid daily before and in early pregnancy to cut neural tube defect risk."
+            }
+          },
+          {
+            "organ": "nerves",
+            "system": "Developing nervous system",
+            "effectType": "anatomical",
+            "severity": "high",
+            "effect": "Defective neural tube / spinal cord formation (fetal)",
+            "detail": "The neural tube forms the brain and spinal cord; incomplete closure in the first month of gestation produces structural CNS defects."
+          }
+        ],
+        "references": [
+          {
+            "title": "Folate — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/"
+          },
+          {
+            "title": "Folic acid for the prevention of neural tube defects",
+            "source": "CDC",
+            "url": "https://www.cdc.gov/folic-acid/about/index.html"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "iodine",
+    "name": "Iodine (I)",
+    "type": "mineral",
+    "category": "Essential trace mineral",
+    "aliases": [
+      "iodide",
+      "i",
+      "iodine-131"
+    ],
+    "casRN": "7553-56-2",
+    "summary": "An essential component of thyroid hormones (T3, T4), which set basal metabolic rate and are critical for fetal and infant brain development.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency",
+        "description": "Limits thyroid hormone synthesis, causing goitre and hypothyroidism; the leading preventable cause of intellectual disability worldwide.",
+        "affects": [
+          {
+            "organ": "thyroid",
+            "system": "Endocrine system",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Goitre (thyroid enlargement)",
+            "detail": "Low iodine reduces thyroid hormone output; rising TSH stimulates the gland to enlarge into a visible goitre."
+          },
+          {
+            "organ": "brain",
+            "system": "Nervous system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Impaired neurodevelopment (cretinism in severe fetal deficiency)",
+            "detail": "Thyroid hormone is essential for fetal and infant brain development; severe deficiency causes irreversible intellectual disability.",
+            "ageModifiers": {
+              "infant": "Congenital/severe deficiency causes cretinism: intellectual disability, deaf-mutism and stunted growth.",
+              "adult": "Hypothyroidism: fatigue, weight gain, cold intolerance, slowed cognition and depression."
+            },
+            "genderModifiers": {
+              "female": "Iodine requirements rise in pregnancy and lactation; maternal deficiency harms fetal brain development."
+            }
+          },
+          {
+            "organ": "heart",
+            "system": "Cardiovascular system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Bradycardia and low metabolic rate",
+            "detail": "Reduced thyroid hormone slows heart rate and overall metabolism."
+          }
+        ],
+        "references": [
+          {
+            "title": "Iodine — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/Iodine-HealthProfessional/"
+          },
+          {
+            "title": "Iodine deficiency disorders",
+            "source": "World Health Organization",
+            "url": "https://www.who.int/data/nutrition/nlis/info/iodine-deficiency"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "iron",
+    "name": "Iron (Fe)",
+    "type": "mineral",
+    "category": "Essential trace mineral",
+    "aliases": [
+      "fe",
+      "ferrous",
+      "ferric",
+      "haem iron",
+      "ferritin"
+    ],
+    "casRN": "7439-89-6",
+    "summary": "An essential mineral central to haemoglobin and myoglobin oxygen transport, and to many enzymes. Both deficiency and overload cause disease.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency",
+        "description": "The most common nutritional deficiency worldwide; limits haemoglobin synthesis.",
+        "affects": [
+          {
+            "organ": "blood",
+            "system": "Haematologic",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Microcytic hypochromic anaemia",
+            "detail": "Low iron limits haem synthesis, producing small, pale red cells with fatigue, pallor and reduced exercise tolerance.",
+            "genderModifiers": {
+              "female": "Menstrual blood loss and pregnancy raise iron demand, making deficiency notably more common in menstruating and pregnant people."
+            },
+            "ageModifiers": {
+              "infant": "Rapid growth and low iron stores make infants and toddlers especially vulnerable; deficiency can impair neurodevelopment.",
+              "child": "Iron deficiency in childhood is linked to impaired cognition and attention."
+            }
+          },
+          {
+            "organ": "heart",
+            "system": "Cardiovascular system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Tachycardia and, if severe, high-output strain",
+            "detail": "To compensate for low oxygen-carrying capacity the heart rate rises; chronic severe anaemia strains the heart."
+          },
+          {
+            "organ": "nerves",
+            "system": "Nervous system",
+            "effectType": "physiological",
+            "severity": "low",
+            "effect": "Restless legs, impaired cognition",
+            "detail": "Iron is a cofactor for dopamine synthesis; deficiency is associated with restless legs syndrome and reduced concentration."
+          }
+        ],
+        "references": [
+          {
+            "title": "Iron — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/"
+          }
+        ]
+      },
+      {
+        "mode": "excess",
+        "label": "Overload (haemochromatosis)",
+        "description": "Chronic iron overload deposits iron in parenchymal organs, generating oxidative damage.",
+        "affects": [
+          {
+            "organ": "liver",
+            "system": "Hepatobiliary system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Cirrhosis and hepatocellular carcinoma risk",
+            "detail": "Iron accumulation in hepatocytes drives fibrosis, cirrhosis and increased liver-cancer risk."
+          },
+          {
+            "organ": "pancreas",
+            "system": "Endocrine / digestive",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Diabetes mellitus ('bronze diabetes')",
+            "detail": "Iron deposition in pancreatic islets impairs insulin secretion, causing diabetes."
+          },
+          {
+            "organ": "heart",
+            "system": "Cardiovascular system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Cardiomyopathy and arrhythmia",
+            "detail": "Myocardial iron loading causes dilated/restrictive cardiomyopathy and conduction disturbance."
+          },
+          {
+            "organ": "skin",
+            "system": "Integumentary system",
+            "effectType": "morphological",
+            "severity": "low",
+            "effect": "Bronze / grey skin pigmentation",
+            "detail": "Iron and melanin deposition gives a characteristic bronze skin discolouration."
+          }
+        ],
+        "references": [
+          {
+            "title": "Hemochromatosis (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK430862/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lead",
+    "name": "Lead (Pb)",
+    "type": "metal",
+    "category": "Toxic heavy metal",
+    "aliases": [
+      "pb",
+      "plumbum",
+      "lead acetate",
+      "tetraethyl lead"
+    ],
+    "casRN": "7439-92-1",
+    "summary": "A toxic heavy metal with no safe exposure level. It interferes with enzymes (notably in haem synthesis), mimics calcium, and is especially harmful to the developing brain.",
+    "defaultMode": "toxicity",
+    "conditions": [
+      {
+        "mode": "toxicity",
+        "label": "Toxicity / exposure",
+        "description": "Lead disrupts haem synthesis and neuronal signalling and deposits in bone; children absorb and are harmed by it far more than adults.",
+        "affects": [
+          {
+            "organ": "brain",
+            "system": "Central nervous system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Encephalopathy and loss of IQ / cognition",
+            "detail": "Lead disrupts neurotransmission and synaptic pruning. High levels cause encephalopathy, seizures and coma; even low chronic exposure lowers IQ and attention.",
+            "ageModifiers": {
+              "infant": "The developing brain is exquisitely sensitive; there is no identified safe blood-lead level in children.",
+              "child": "Causes irreversible deficits in IQ, attention and behaviour, plus developmental delay.",
+              "adult": "Chronic exposure causes headache, memory loss, peripheral neuropathy (wrist/foot drop) and mood change."
+            }
+          },
+          {
+            "organ": "blood",
+            "system": "Haematologic",
+            "effectType": "biochemical",
+            "severity": "high",
+            "effect": "Microcytic anaemia with basophilic stippling",
+            "detail": "Lead inhibits ALA dehydratase and ferrochelatase in haem synthesis, causing anaemia and basophilic stippling of red cells."
+          },
+          {
+            "organ": "kidneys",
+            "system": "Urinary system",
+            "effectType": "disease",
+            "severity": "medium",
+            "effect": "Nephropathy",
+            "detail": "Chronic exposure damages proximal tubules (Fanconi-like) and, over years, causes interstitial nephritis and chronic kidney disease."
+          },
+          {
+            "organ": "skeleton",
+            "system": "Skeletal system",
+            "effectType": "anatomical",
+            "severity": "medium",
+            "effect": "Bone storage; 'lead lines'",
+            "detail": "Lead mimics calcium and is stored in bone for decades; dense metaphyseal 'lead lines' are visible on children's X-rays."
+          },
+          {
+            "organ": "stomach",
+            "system": "Digestive system",
+            "effectType": "physiological",
+            "severity": "low",
+            "effect": "Lead colic and constipation",
+            "detail": "Acute exposure causes crampy abdominal pain ('lead colic'), anorexia and constipation."
+          }
+        ],
+        "references": [
+          {
+            "title": "Lead poisoning",
+            "source": "World Health Organization",
+            "url": "https://www.who.int/news-room/fact-sheets/detail/lead-poisoning-and-health"
+          },
+          {
+            "title": "Lead Toxicity (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK562211/"
+          },
+          {
+            "title": "Lead — Comparative Toxicogenomics Database",
+            "source": "CTD",
+            "url": "https://ctdbase.org/detail.go?type=chem&acc=D007854"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mercury",
+    "name": "Mercury (Hg)",
+    "type": "metal",
+    "category": "Toxic heavy metal",
+    "aliases": [
+      "hg",
+      "methylmercury",
+      "quicksilver",
+      "mercuric chloride",
+      "elemental mercury"
+    ],
+    "casRN": "7439-97-6",
+    "summary": "A toxic heavy metal. Organic methylmercury (from contaminated fish) targets the nervous system and crosses the placenta; inhaled elemental mercury vapour harms the lungs and brain; mercuric salts damage the kidneys.",
+    "defaultMode": "toxicity",
+    "conditions": [
+      {
+        "mode": "toxicity",
+        "label": "Toxicity / exposure",
+        "description": "Mercury binds sulphydryl groups and disrupts the nervous system, kidneys and, with vapour, the lungs.",
+        "affects": [
+          {
+            "organ": "brain",
+            "system": "Central nervous system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Neurotoxicity — ataxia, tremor, paraesthesia, visual field loss",
+            "detail": "Methylmercury concentrates in the brain, causing sensory disturbance, ataxia, tremor, constricted visual fields and hearing loss (Minamata disease).",
+            "ageModifiers": {
+              "infant": "Prenatal methylmercury exposure disrupts neuronal migration, causing cerebral palsy-like syndromes and developmental delay.",
+              "adult": "Chronic vapour exposure causes tremor, erethism (irritability, shyness), insomnia and memory loss ('mad hatter')."
+            },
+            "genderModifiers": {
+              "female": "Methylmercury crosses the placenta and concentrates in the fetus; pregnant people are advised to limit high-mercury fish."
+            }
+          },
+          {
+            "organ": "kidneys",
+            "system": "Urinary system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Tubular necrosis / nephrotic syndrome",
+            "detail": "Inorganic mercuric salts accumulate in the proximal tubule, causing acute tubular necrosis or membranous nephropathy."
+          },
+          {
+            "organ": "lungs",
+            "system": "Respiratory system",
+            "effectType": "disease",
+            "severity": "medium",
+            "effect": "Chemical pneumonitis (vapour inhalation)",
+            "detail": "Acute inhalation of elemental mercury vapour causes cough, breathlessness and chemical pneumonitis."
+          },
+          {
+            "organ": "nerves",
+            "system": "Peripheral nervous system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Peripheral paraesthesia",
+            "detail": "Tingling around the mouth, hands and feet is an early sign of methylmercury toxicity."
+          }
+        ],
+        "references": [
+          {
+            "title": "Mercury and health",
+            "source": "World Health Organization",
+            "url": "https://www.who.int/news-room/fact-sheets/detail/mercury-and-health"
+          },
+          {
+            "title": "Mercury Toxicity (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK499935/"
+          },
+          {
+            "title": "Mercury — Comparative Toxicogenomics Database",
+            "source": "CTD",
+            "url": "https://ctdbase.org/detail.go?type=chem&acc=D008628"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vitamin-a",
+    "name": "Vitamin A (Retinol)",
+    "type": "vitamin",
+    "category": "Fat-soluble vitamin",
+    "aliases": [
+      "retinol",
+      "retinoic acid",
+      "retinal",
+      "retinoid",
+      "beta-carotene"
+    ],
+    "casRN": "68-26-8",
+    "summary": "A fat-soluble vitamin essential for the visual cycle (rhodopsin), epithelial differentiation, immune function and embryonic development.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency",
+        "description": "A leading cause of preventable childhood blindness worldwide; impairs the retinal visual cycle and epithelial integrity.",
+        "affects": [
+          {
+            "organ": "eyes",
+            "system": "Visual system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Night blindness, xerophthalmia, Bitot spots, keratomalacia",
+            "detail": "Reduced rhodopsin regeneration causes night blindness first; progressive conjunctival/corneal drying (xerophthalmia) can end in corneal melting (keratomalacia) and irreversible blindness.",
+            "ageModifiers": {
+              "child": "Young children are most vulnerable; vitamin A deficiency is a major cause of preventable childhood blindness and raises measles mortality."
+            }
+          },
+          {
+            "organ": "skin",
+            "system": "Integumentary system",
+            "effectType": "morphological",
+            "severity": "medium",
+            "effect": "Follicular hyperkeratosis and dry skin",
+            "detail": "Loss of epithelial differentiation causes rough, dry skin with keratin plugs around follicles."
+          },
+          {
+            "organ": "lungs",
+            "system": "Immune / respiratory",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Impaired mucosal immunity, more respiratory infection",
+            "detail": "Compromised epithelial barriers and immune function increase susceptibility to respiratory and gastrointestinal infection."
+          }
+        ],
+        "references": [
+          {
+            "title": "Vitamin A and Carotenoids — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/"
+          },
+          {
+            "title": "Vitamin A deficiency",
+            "source": "World Health Organization",
+            "url": "https://www.who.int/data/nutrition/nlis/info/vitamin-a-deficiency"
+          }
+        ]
+      },
+      {
+        "mode": "toxicity",
+        "label": "Toxicity (hypervitaminosis A)",
+        "description": "Excess preformed retinol is hepatotoxic and teratogenic.",
+        "affects": [
+          {
+            "organ": "liver",
+            "system": "Hepatobiliary system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Hepatotoxicity, fibrosis",
+            "detail": "Chronic excess accumulates in hepatic stellate cells, driving fibrosis and portal hypertension."
+          },
+          {
+            "organ": "brain",
+            "system": "Nervous system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Raised intracranial pressure (pseudotumour cerebri)",
+            "detail": "Acute excess can raise intracranial pressure, causing headache, blurred vision and, in infants, a bulging fontanelle."
+          },
+          {
+            "organ": "reproductive",
+            "system": "Reproductive / developmental",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Teratogenicity",
+            "detail": "High-dose retinoids in early pregnancy cause craniofacial, cardiac and CNS birth defects.",
+            "genderModifiers": {
+              "female": "In people who are or may become pregnant, high-dose vitamin A / retinoids are strongly teratogenic and must be avoided."
+            }
+          }
+        ],
+        "references": [
+          {
+            "title": "Vitamin A and Carotenoids — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vitamin-b1",
+    "name": "Vitamin B1 (Thiamine)",
+    "type": "vitamin",
+    "category": "Water-soluble vitamin",
+    "aliases": [
+      "thiamine",
+      "thiamin",
+      "aneurine",
+      "b1"
+    ],
+    "casRN": "59-43-8",
+    "summary": "A water-soluble coenzyme (thiamine pyrophosphate) central to carbohydrate metabolism and ATP production; nervous and cardiac tissue depend on it heavily.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency (beriberi / Wernicke-Korsakoff)",
+        "description": "Impaired oxidative metabolism harms high-energy tissues: peripheral nerves, heart and brain.",
+        "affects": [
+          {
+            "organ": "nerves",
+            "system": "Peripheral nervous system",
+            "effectType": "physiological",
+            "severity": "high",
+            "effect": "Dry beriberi — symmetric peripheral neuropathy",
+            "detail": "Length-dependent sensorimotor neuropathy causes tingling, burning feet, weakness and loss of reflexes."
+          },
+          {
+            "organ": "heart",
+            "system": "Cardiovascular system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Wet beriberi — high-output heart failure",
+            "detail": "Peripheral vasodilation and myocardial dysfunction cause oedema, breathlessness and high-output cardiac failure."
+          },
+          {
+            "organ": "brain",
+            "system": "Central nervous system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Wernicke encephalopathy / Korsakoff syndrome",
+            "detail": "Acute triad of confusion, ophthalmoplegia and ataxia; untreated it progresses to the irreversible amnesia of Korsakoff syndrome.",
+            "ageModifiers": {
+              "adult": "Classically precipitated by chronic alcohol use or malnutrition; give thiamine before glucose to avoid precipitating Wernicke encephalopathy.",
+              "infant": "Infantile beriberi can occur in breastfed infants of thiamine-deficient mothers, with acute cardiac and neurological collapse."
+            }
+          }
+        ],
+        "references": [
+          {
+            "title": "Thiamin — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/Thiamin-HealthProfessional/"
+          },
+          {
+            "title": "Thiamine Deficiency (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK482360/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vitamin-b12",
+    "name": "Vitamin B12 (Cobalamin)",
+    "type": "vitamin",
+    "category": "Water-soluble vitamin",
+    "aliases": [
+      "cobalamin",
+      "cyanocobalamin",
+      "methylcobalamin",
+      "b12"
+    ],
+    "casRN": "68-19-9",
+    "summary": "A cobalt-containing vitamin required for DNA synthesis, red-cell maturation and myelin maintenance; a cofactor for methionine synthase and methylmalonyl-CoA mutase.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency",
+        "description": "Impairs DNA synthesis (megaloblastic anaemia) and myelin integrity (subacute combined degeneration).",
+        "affects": [
+          {
+            "organ": "blood",
+            "system": "Haematologic",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Megaloblastic (pernicious) anaemia",
+            "detail": "Defective DNA synthesis produces large, immature red cells and hypersegmented neutrophils, causing fatigue, pallor and breathlessness."
+          },
+          {
+            "organ": "nerves",
+            "system": "Nervous system",
+            "effectType": "anatomical",
+            "severity": "high",
+            "effect": "Subacute combined degeneration of the spinal cord",
+            "detail": "Demyelination of the dorsal columns and corticospinal tracts causes numbness, tingling, loss of proprioception, unsteady gait and weakness — potentially irreversible if untreated.",
+            "ageModifiers": {
+              "elderly": "Common and easily missed in older adults; may present as cognitive decline or gait disturbance."
+            }
+          },
+          {
+            "organ": "brain",
+            "system": "Nervous system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Cognitive changes, memory loss, mood disturbance",
+            "detail": "Deficiency can cause irritability, depression and reversible cognitive impairment."
+          },
+          {
+            "organ": "stomach",
+            "system": "Digestive system",
+            "effectType": "physiological",
+            "severity": "low",
+            "effect": "Glossitis; often linked to loss of intrinsic factor",
+            "detail": "A smooth, sore (beefy-red) tongue is common; autoimmune atrophic gastritis removes intrinsic factor, the usual cause of pernicious anaemia."
+          }
+        ],
+        "references": [
+          {
+            "title": "Vitamin B12 — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/"
+          },
+          {
+            "title": "Vitamin B12 Deficiency (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK441923/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vitamin-c",
+    "name": "Vitamin C (Ascorbic acid)",
+    "type": "vitamin",
+    "category": "Water-soluble vitamin",
+    "aliases": [
+      "ascorbic acid",
+      "ascorbate",
+      "l-ascorbic acid"
+    ],
+    "casRN": "50-81-7",
+    "summary": "A water-soluble antioxidant and essential cofactor for prolyl/lysyl hydroxylases in collagen synthesis, carnitine and catecholamine production, and non-haem iron absorption.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency (scurvy)",
+        "description": "Without ascorbate, collagen cross-linking fails, weakening connective tissue, blood-vessel walls and bone matrix.",
+        "affects": [
+          {
+            "organ": "skin",
+            "system": "Integumentary system",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Perifollicular haemorrhage, corkscrew hairs, poor wound healing",
+            "detail": "Defective collagen makes capillaries fragile; classic signs are perifollicular bleeding, bruising (ecchymoses) and wounds that reopen or heal slowly.",
+            "ageModifiers": {
+              "infant": "Infantile scurvy (Barlow disease): irritability, pseudoparalysis from painful subperiosteal haemorrhage and tenderness of the limbs."
+            }
+          },
+          {
+            "organ": "teeth",
+            "system": "Dental / oral",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Swollen, bleeding gums and loosening teeth",
+            "detail": "Gingival collagen breaks down, producing spongy, haemorrhagic gums and eventual tooth loss."
+          },
+          {
+            "organ": "blood",
+            "system": "Haematologic",
+            "effectType": "disease",
+            "severity": "medium",
+            "effect": "Anaemia",
+            "detail": "Bleeding plus reduced iron absorption contributes to anaemia and fatigue."
+          },
+          {
+            "organ": "skeleton",
+            "system": "Skeletal system",
+            "effectType": "morphological",
+            "severity": "medium",
+            "effect": "Impaired bone matrix and joint bleeding",
+            "detail": "Osteoid collagen is defective; children may show growth-plate abnormalities and painful haemarthroses.",
+            "ageModifiers": {
+              "child": "Subperiosteal haemorrhage and disturbed endochondral ossification cause bone pain and reluctance to move."
+            }
+          }
+        ],
+        "references": [
+          {
+            "title": "Vitamin C — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/"
+          },
+          {
+            "title": "Scurvy (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK493187/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vitamin-d",
+    "name": "Vitamin D (Cholecalciferol)",
+    "type": "vitamin",
+    "category": "Fat-soluble vitamin",
+    "aliases": [
+      "cholecalciferol",
+      "vitamin d3",
+      "calciferol",
+      "ergocalciferol",
+      "vitamin d2",
+      "25-hydroxyvitamin D",
+      "sunshine vitamin"
+    ],
+    "casRN": "67-97-0",
+    "summary": "A fat-soluble secosteroid that regulates intestinal calcium and phosphate absorption and bone mineralisation. Synthesised in skin on UVB exposure and obtained from diet.",
+    "defaultMode": "deficiency",
+    "conditions": [
+      {
+        "mode": "deficiency",
+        "label": "Deficiency",
+        "description": "Low vitamin D impairs calcium/phosphate homeostasis, causing defective bone mineralisation and secondary hyperparathyroidism.",
+        "affects": [
+          {
+            "organ": "skeleton",
+            "system": "Skeletal system",
+            "effectType": "morphological",
+            "severity": "high",
+            "effect": "Defective bone mineralisation (rickets / osteomalacia)",
+            "detail": "Inadequate calcium-phosphate deposition softens the bone matrix (osteoid). Weight-bearing bones deform and fracture risk rises.",
+            "ageModifiers": {
+              "infant": "Growth-plate widening, craniotabes (soft skull), delayed fontanelle closure and bowing of the legs as weight-bearing begins.",
+              "child": "Rickets: bowed legs or knock-knees, widened wrists, rachitic rosary at the costochondral junctions and delayed growth.",
+              "adolescent": "Bone pain and reduced peak bone mass accrual during the growth spurt.",
+              "adult": "Osteomalacia: diffuse bone pain, proximal muscle weakness and pseudofractures (Looser zones).",
+              "elderly": "Accelerated osteoporosis and markedly higher risk of hip and vertebral fractures."
+            }
+          },
+          {
+            "organ": "muscles",
+            "system": "Muscular system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Proximal muscle weakness",
+            "detail": "Low vitamin D status is linked to proximal myopathy, impaired contractility, a waddling gait and increased falls.",
+            "ageModifiers": {
+              "elderly": "Weakness compounds fall and fracture risk; supplementation can reduce falls in deficient older adults."
+            }
+          },
+          {
+            "organ": "teeth",
+            "system": "Dental",
+            "effectType": "morphological",
+            "severity": "low",
+            "effect": "Enamel hypoplasia / delayed dentition",
+            "detail": "Impaired mineralisation can affect enamel formation and delay tooth eruption in children."
+          }
+        ],
+        "references": [
+          {
+            "title": "Vitamin D — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/"
+          },
+          {
+            "title": "Vitamin D Deficiency (StatPearls)",
+            "source": "NCBI Bookshelf",
+            "url": "https://www.ncbi.nlm.nih.gov/books/NBK532266/"
+          }
+        ]
+      },
+      {
+        "mode": "toxicity",
+        "label": "Toxicity (hypervitaminosis D)",
+        "description": "Excess vitamin D (almost always from over-supplementation) drives hypercalcaemia.",
+        "affects": [
+          {
+            "organ": "kidneys",
+            "system": "Urinary system",
+            "effectType": "disease",
+            "severity": "high",
+            "effect": "Hypercalcaemia, nephrocalcinosis and kidney stones",
+            "detail": "Sustained hypercalcaemia causes calcium deposition in renal tissue, polyuria, dehydration and acute kidney injury."
+          },
+          {
+            "organ": "heart",
+            "system": "Cardiovascular system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Arrhythmia from hypercalcaemia",
+            "detail": "Elevated serum calcium shortens the QT interval and can provoke arrhythmias."
+          },
+          {
+            "organ": "brain",
+            "system": "Nervous system",
+            "effectType": "physiological",
+            "severity": "medium",
+            "effect": "Confusion, lethargy",
+            "detail": "Hypercalcaemia depresses the central nervous system, producing lethargy, confusion and in severe cases stupor."
+          }
+        ],
+        "references": [
+          {
+            "title": "Vitamin D — Health Professional Fact Sheet",
+            "source": "NIH Office of Dietary Supplements",
+            "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/"
+          }
+        ]
+      }
+    ],
+    "disclaimer": "Educational summary of well-established physiology. Not a diagnosis or treatment plan."
+  }
+];
+window.api = { getSubstances: () => ({ substances: EMBEDDED_SUBSTANCES, errors: [] }) };
+
+// ---- 3D model (from body3d.js) ----
+
+
+
+/**
+ * BodyModel renders a transparent 3D human figure with internal organs.
+ * Call highlight([{ organ, severity, text }]) to glow affected parts and
+ * drop short labels beside them. The written conclusion is handled by the DOM.
+ */
+
+const SEVERITY_COLOR = {
+  high: 0xff4d4d,
+  medium: 0xffa033,
+  low: 0xffe14d
+};
+
+const SEVERITY_INTENSITY = {
+  high: 1.15,
+  medium: 0.85,
+  low: 0.6
+};
+
+// Human-readable organ names for the floating labels.
+const ORGAN_LABEL = {
+  brain: 'Brain',
+  eyes: 'Eyes',
+  teeth: 'Teeth / gums',
+  thyroid: 'Thyroid',
+  heart: 'Heart',
+  lungs: 'Lungs',
+  liver: 'Liver',
+  stomach: 'Stomach',
+  pancreas: 'Pancreas',
+  spleen: 'Spleen',
+  kidneys: 'Kidneys',
+  intestines: 'Intestines',
+  bladder: 'Bladder',
+  reproductive: 'Reproductive',
+  spine: 'Spine',
+  skin: 'Skin',
+  muscles: 'Muscles',
+  skeleton: 'Skeleton',
+  blood: 'Blood',
+  nerves: 'Nerves',
+  hair: 'Hair'
+};
+
+function ellipsoid(radius, sx, sy, sz, color) {
+  const geo = new THREE.SphereGeometry(radius, 32, 24);
+  const mat = new THREE.MeshStandardMaterial({
+    color,
+    transparent: true,
+    opacity: 0.9,
+    roughness: 0.55,
+    metalness: 0.0,
+    emissive: 0x000000,
+    emissiveIntensity: 0
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.scale.set(sx, sy, sz);
+  return mesh;
+}
+
+class BodyModel {
+  constructor(container) {
+    this.container = container;
+    this.organs = {};          // key -> { meshes:[], anchor:Vector3 }
+    this.highlighted = [];     // [{ meshes, severity }]
+    this.labelSprites = [];
+    this.clock = new THREE.Clock();
+    this._interacted = false;
+
+    this._initScene();
+    this._buildBody();
+    this._buildOrgans();
+    this._animate = this._animate.bind(this);
+    this._onResize = this._onResize.bind(this);
+    window.addEventListener('resize', this._onResize);
+    requestAnimationFrame(this._animate);
+  }
+
+  _initScene() {
+    const { clientWidth: w, clientHeight: h } = this.container;
+    this.scene = new THREE.Scene();
+
+    this.camera = new THREE.PerspectiveCamera(40, (w || 1) / (h || 1), 0.1, 100);
+    this.camera.position.set(0, 0.18, 2.55);
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setSize(w || 600, h || 600);
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.container.appendChild(this.renderer.domElement);
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.08;
+    this.controls.target.set(0, 0.12, 0);
+    this.controls.minDistance = 1.2;
+    this.controls.maxDistance = 5;
+    this.controls.autoRotate = true;
+    this.controls.autoRotateSpeed = 0.9;
+    this.controls.addEventListener('start', () => {
+      this._interacted = true;
+      this.controls.autoRotate = false;
+    });
+
+    // Lighting
+    this.scene.add(new THREE.HemisphereLight(0xbfe3ff, 0x0a0f1e, 0.9));
+    const key = new THREE.DirectionalLight(0xffffff, 1.4);
+    key.position.set(2, 3, 3);
+    this.scene.add(key);
+    const rim = new THREE.DirectionalLight(0x6ea8ff, 0.9);
+    rim.position.set(-2.5, 1.5, -2);
+    this.scene.add(rim);
+    this.scene.add(new THREE.AmbientLight(0x334466, 0.4));
+
+    // Soft platform ring under the figure
+    const ring = new THREE.Mesh(
+      new THREE.CircleGeometry(0.55, 48),
+      new THREE.MeshBasicMaterial({ color: 0x1b2b50, transparent: true, opacity: 0.35 })
+    );
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = -0.98;
+    this.scene.add(ring);
+
+    this.labelsGroup = new THREE.Group();
+    this.scene.add(this.labelsGroup);
+  }
+
+  _buildBody() {
+    this.shellMeshes = [];
+    const shellMat = new THREE.MeshPhysicalMaterial({
+      color: 0x8fd0ff,
+      transparent: true,
+      opacity: 0.1,
+      roughness: 0.15,
+      metalness: 0.0,
+      clearcoat: 0.6,
+      clearcoatRoughness: 0.3,
+      emissive: 0x0a2740,
+      emissiveIntensity: 0.0,
+      depthWrite: false,
+      side: THREE.DoubleSide
+    });
+    this.shellMat = shellMat;
+
+    const body = new THREE.Group();
+    const add = (mesh) => {
+      mesh.material = shellMat;
+      mesh.renderOrder = 2;
+      body.add(mesh);
+      this.shellMeshes.push(mesh);
+    };
+
+    // Head + neck
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.135, 32, 24).scale(0.92, 1.05, 0.95).translate(0, 0.78, 0)));
+    add(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.06, 0.12, 24).translate(0, 0.64, 0)));
+
+    // Torso (chest + abdomen) and pelvis
+    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.17, 0.42, 12, 24));
+    torso.scale.set(1.05, 1, 0.6);
+    torso.position.set(0, 0.33, 0);
+    add(torso);
+    const pelvis = new THREE.Mesh(new THREE.SphereGeometry(0.17, 24, 20).scale(1.0, 0.7, 0.6).translate(0, -0.03, 0));
+    add(pelvis);
+
+    // Shoulders
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 16).translate(-0.2, 0.56, 0)));
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 16).translate(0.2, 0.56, 0)));
+
+    // Arms
+    const armGeo = new THREE.CapsuleGeometry(0.052, 0.5, 8, 16);
+    const lArm = new THREE.Mesh(armGeo);
+    lArm.position.set(-0.26, 0.28, 0);
+    lArm.rotation.z = 0.18;
+    add(lArm);
+    const rArm = new THREE.Mesh(armGeo);
+    rArm.position.set(0.26, 0.28, 0);
+    rArm.rotation.z = -0.18;
+    add(rArm);
+
+    // Legs
+    const legGeo = new THREE.CapsuleGeometry(0.07, 0.62, 8, 16);
+    const lLeg = new THREE.Mesh(legGeo);
+    lLeg.position.set(-0.09, -0.52, 0);
+    add(lLeg);
+    const rLeg = new THREE.Mesh(legGeo);
+    rLeg.position.set(0.09, -0.52, 0);
+    add(rLeg);
+
+    this.scene.add(body);
+    this.bodyGroup = body;
+
+    // Hair cap (field key: hair)
+    const hair = new THREE.Mesh(
+      new THREE.SphereGeometry(0.14, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2.1),
+      new THREE.MeshStandardMaterial({ color: 0x2a2320, roughness: 0.8, transparent: true, opacity: 0.9, emissive: 0x000000, emissiveIntensity: 0 })
+    );
+    hair.position.set(0, 0.82, 0);
+    this.scene.add(hair);
+    this._register('hair', [hair], new THREE.Vector3(0, 0.95, 0));
+
+    // Spine (field keys: spine / skeleton / nerves)
+    const spine = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.022, 0.022, 0.72, 12),
+      new THREE.MeshStandardMaterial({ color: 0x9aa7b5, roughness: 0.6, transparent: true, opacity: 0.9, emissive: 0x000000, emissiveIntensity: 0 })
+    );
+    spine.position.set(0, 0.28, -0.075);
+    this.scene.add(spine);
+    this._register('spine', [spine], new THREE.Vector3(-0.28, 0.3, -0.1));
+  }
+
+  _register(key, meshes, anchor) {
+    this.organs[key] = { meshes, anchor };
+  }
+
+  _buildOrgans() {
+    const addOrgan = (key, mesh, anchor) => {
+      this.scene.add(mesh);
+      this._register(key, [mesh], anchor);
+    };
+
+    // Brain
+    const brain = ellipsoid(0.078, 1, 0.85, 0.95, 0x6f7d92);
+    brain.position.set(0, 0.8, 0);
+    addOrgan('brain', brain, new THREE.Vector3(0.22, 0.86, 0));
+
+    // Eyes
+    const eyeMatColor = 0x5c6b80;
+    const eyeL = ellipsoid(0.02, 1, 1, 1, eyeMatColor); eyeL.position.set(-0.05, 0.79, 0.1);
+    const eyeR = ellipsoid(0.02, 1, 1, 1, eyeMatColor); eyeR.position.set(0.05, 0.79, 0.1);
+    this.scene.add(eyeL); this.scene.add(eyeR);
+    this._register('eyes', [eyeL, eyeR], new THREE.Vector3(0.24, 0.79, 0.1));
+
+    // Teeth / gums
+    const teeth = ellipsoid(0.03, 1.4, 0.5, 0.9, 0x8a94a6);
+    teeth.position.set(0, 0.705, 0.085);
+    addOrgan('teeth', teeth, new THREE.Vector3(0.22, 0.7, 0.1));
+
+    // Thyroid
+    const thyroid = ellipsoid(0.028, 1.5, 0.8, 0.8, 0x7a6b8c);
+    thyroid.position.set(0, 0.63, 0.045);
+    addOrgan('thyroid', thyroid, new THREE.Vector3(0.22, 0.63, 0.06));
+
+    // Heart
+    const heart = ellipsoid(0.058, 1, 1.1, 0.95, 0x7a5560);
+    heart.position.set(-0.04, 0.46, 0.05);
+    addOrgan('heart', heart, new THREE.Vector3(-0.3, 0.47, 0.08));
+
+    // Lungs
+    const lungL = ellipsoid(0.072, 0.8, 1.25, 0.7, 0x6b7f8c); lungL.position.set(-0.1, 0.47, 0.0);
+    const lungR = ellipsoid(0.072, 0.8, 1.25, 0.7, 0x6b7f8c); lungR.position.set(0.1, 0.47, 0.0);
+    this.scene.add(lungL); this.scene.add(lungR);
+    this._register('lungs', [lungL, lungR], new THREE.Vector3(0.32, 0.5, 0.05));
+
+    // Liver
+    const liver = ellipsoid(0.07, 1.5, 0.85, 0.9, 0x6e4f4a);
+    liver.position.set(0.075, 0.27, 0.03);
+    addOrgan('liver', liver, new THREE.Vector3(0.33, 0.27, 0.05));
+
+    // Stomach
+    const stomach = ellipsoid(0.055, 1.1, 1.2, 0.9, 0x7c6a52);
+    stomach.position.set(-0.07, 0.29, 0.04);
+    addOrgan('stomach', stomach, new THREE.Vector3(-0.32, 0.31, 0.06));
+
+    // Spleen
+    const spleen = ellipsoid(0.035, 1, 1.2, 0.9, 0x5f4a63);
+    spleen.position.set(-0.135, 0.27, -0.01);
+    addOrgan('spleen', spleen, new THREE.Vector3(-0.34, 0.24, -0.02));
+
+    // Pancreas
+    const pancreas = ellipsoid(0.03, 2.2, 0.7, 0.8, 0x7d7458);
+    pancreas.position.set(-0.01, 0.22, -0.02);
+    addOrgan('pancreas', pancreas, new THREE.Vector3(0.3, 0.2, -0.04));
+
+    // Kidneys
+    const kidL = ellipsoid(0.034, 0.8, 1.3, 0.8, 0x6a4e4e); kidL.position.set(-0.085, 0.15, -0.07);
+    const kidR = ellipsoid(0.034, 0.8, 1.3, 0.8, 0x6a4e4e); kidR.position.set(0.085, 0.15, -0.07);
+    this.scene.add(kidL); this.scene.add(kidR);
+    this._register('kidneys', [kidL, kidR], new THREE.Vector3(0.32, 0.13, -0.1));
+
+    // Intestines
+    const intestines = ellipsoid(0.11, 1, 0.85, 0.8, 0x80705a);
+    intestines.position.set(0, 0.03, 0.03);
+    addOrgan('intestines', intestines, new THREE.Vector3(0.32, 0.0, 0.06));
+
+    // Bladder
+    const bladder = ellipsoid(0.04, 1, 0.9, 0.9, 0x6b7a84);
+    bladder.position.set(0, -0.12, 0.05);
+    addOrgan('bladder', bladder, new THREE.Vector3(0.26, -0.14, 0.07));
+
+    // Reproductive
+    const repro = ellipsoid(0.038, 1.3, 0.8, 0.9, 0x6d5a74);
+    repro.position.set(0, -0.17, 0.03);
+    addOrgan('reproductive', repro, new THREE.Vector3(-0.26, -0.18, 0.06));
+  }
+
+  // Map a data organ key to the mesh groups that should glow.
+  _targetsFor(key) {
+    switch (key) {
+      case 'skin':
+      case 'muscles':
+      case 'blood':
+        return ['__shell'];
+      case 'skeleton':
+        return ['spine'];
+      case 'nerves':
+        return ['spine', 'brain'];
+      default:
+        return this.organs[key] ? [key] : [];
+    }
+  }
+
+  _anchorFor(key) {
+    if (key === 'skin' || key === 'muscles' || key === 'blood') return new THREE.Vector3(0.34, 0.33, 0.2);
+    if (this.organs[key]) return this.organs[key].anchor;
+    return new THREE.Vector3(0.34, 0.2, 0.2);
+  }
+
+  /**
+   * affected: [{ organ, severity, text }]
+   */
+  highlight(affected) {
+    this._resetHighlights();
+    const seen = new Set();
+
+    for (const item of affected || []) {
+      const key = item.organ;
+      const color = SEVERITY_COLOR[item.severity] || SEVERITY_COLOR.medium;
+      const intensity = SEVERITY_INTENSITY[item.severity] || SEVERITY_INTENSITY.medium;
+      const targets = this._targetsFor(key);
+
+      for (const t of targets) {
+        if (t === '__shell') {
+          this.shellMat.emissive.setHex(color);
+          this.shellMat.emissiveIntensity = 0.0; // animated in loop
+          this.shellMat.opacity = 0.22;
+          this.highlighted.push({ meshes: this.shellMeshes, severity: item.severity, isShell: true });
+        } else {
+          const org = this.organs[t];
+          if (!org) continue;
+          for (const m of org.meshes) {
+            m.material.emissive.setHex(color);
+            m.material.color.setHex(color);
+            m.material.opacity = 0.97;
+          }
+          this.highlighted.push({ meshes: org.meshes, severity: item.severity });
+        }
+      }
+
+      // One label per organ key
+      if (!seen.has(key) && targets.length) {
+        seen.add(key);
+        this._addLabel(ORGAN_LABEL[key] || key, color, this._anchorFor(key));
+      }
+    }
+  }
+
+  _resetHighlights() {
+    // Restore organ base look
+    for (const key of Object.keys(this.organs)) {
+      for (const m of this.organs[key].meshes) {
+        if (!m.userData.baseColor) m.userData.baseColor = m.material.color.getHex();
+        m.material.emissive.setHex(0x000000);
+        m.material.emissiveIntensity = 0;
+        m.material.color.setHex(m.userData.baseColor);
+        m.material.opacity = 0.88;
+      }
+    }
+    this.shellMat.emissive.setHex(0x0a2740);
+    this.shellMat.emissiveIntensity = 0;
+    this.shellMat.opacity = 0.1;
+    this.highlighted = [];
+    this._clearLabels();
+  }
+
+  _addLabel(text, color, anchor) {
+    const pad = 24;
+    const fontSize = 44;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.font = `600 ${fontSize}px Segoe UI, system-ui, sans-serif`;
+    const textW = ctx.measureText(text).width;
+    canvas.width = textW + pad * 2;
+    canvas.height = fontSize + pad;
+
+    ctx.font = `600 ${fontSize}px Segoe UI, system-ui, sans-serif`;
+    const hex = '#' + color.toString(16).padStart(6, '0');
+    ctx.fillStyle = 'rgba(10,16,32,0.82)';
+    roundRect(ctx, 2, 2, canvas.width - 4, canvas.height - 4, 14);
+    ctx.fill();
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = hex;
+    roundRect(ctx, 2, 2, canvas.width - 4, canvas.height - 4, 14);
+    ctx.stroke();
+    ctx.fillStyle = '#eaf2ff';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, pad, canvas.height / 2 + 2);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false }));
+    const aspect = canvas.width / canvas.height;
+    const scale = 0.11;
+    sprite.scale.set(scale * aspect, scale, 1);
+    sprite.position.copy(anchor);
+    sprite.renderOrder = 10;
+    this.labelsGroup.add(sprite);
+    this.labelSprites.push(sprite);
+  }
+
+  _clearLabels() {
+    for (const s of this.labelSprites) {
+      this.labelsGroup.remove(s);
+      s.material.map?.dispose();
+      s.material.dispose();
+    }
+    this.labelSprites = [];
+  }
+
+  resetView() {
+    this.camera.position.set(0, 0.18, 2.55);
+    this.controls.target.set(0, 0.12, 0);
+    this.controls.autoRotate = true;
+    this._interacted = false;
+    this.controls.update();
+  }
+
+  _onResize() {
+    const w = this.container.clientWidth;
+    const h = this.container.clientHeight;
+    if (!w || !h) return;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+  }
+
+  _animate() {
+    requestAnimationFrame(this._animate);
+    const t = this.clock.getElapsedTime();
+    const pulse = (Math.sin(t * 3.2) + 1) / 2; // 0..1
+
+    for (const h of this.highlighted) {
+      const base = SEVERITY_INTENSITY[h.severity] || 0.8;
+      if (h.isShell) {
+        this.shellMat.emissiveIntensity = 0.25 + pulse * 0.5;
+      } else {
+        for (const m of h.meshes) {
+          m.material.emissiveIntensity = base * (0.5 + pulse * 0.7);
+        }
+      }
+    }
+
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+
+// ---- UI + logic (from renderer.js) ----
+
+
+const EFFECT_TYPE_LABEL = {
+  morphological: 'Morphological',
+  anatomical: 'Anatomical',
+  physiological: 'Physiological',
+  biochemical: 'Biochemical',
+  disease: 'Disease'
+};
+
+const AGE_BANDS = [
+  { key: 'infant', label: 'Infant', max: 1 },
+  { key: 'child', label: 'Child', max: 12 },
+  { key: 'adolescent', label: 'Adolescent', max: 17 },
+  { key: 'adult', label: 'Adult', max: 64 },
+  { key: 'elderly', label: 'Older adult', max: 200 }
+];
+
+const state = {
+  substances: [],
+  current: null,
+  currentMode: null,
+  body: null
+};
+
+const el = (id) => document.getElementById(id);
+
+function ageToBand(age) {
+  const n = Number(age);
+  if (Number.isNaN(n)) return AGE_BANDS[3];
+  return AGE_BANDS.find((b) => n <= b.max) || AGE_BANDS[AGE_BANDS.length - 1];
+}
+
+function init() {
+  const { substances, errors } = window.api.getSubstances();
+  state.substances = substances;
+
+  if (errors && errors.length) {
+    const box = el('loadErrors');
+    box.hidden = false;
+    box.innerHTML = '<strong>Data load warnings:</strong><br>' + errors.map(escapeHtml).join('<br>');
+  }
+
+  el('libCount').textContent = `(${substances.length})`;
+  renderBrowseList();
+  wireEvents();
+
+  // Instantiate the 3D model once the viewport has a size.
+  state.body = new BodyModel(el('viewport'));
+}
+
+function wireEvents() {
+  const search = el('search');
+  search.addEventListener('input', onSearchInput);
+  search.addEventListener('keydown', onSearchKey);
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-wrap')) hideSuggestions();
+  });
+
+  el('age').addEventListener('input', () => {
+    el('ageBand').textContent = ageToBand(el('age').value).label;
+    if (state.current) renderCondition();
+  });
+  el('gender').addEventListener('change', () => { if (state.current) renderCondition(); });
+  el('resetView').addEventListener('click', () => state.body && state.body.resetView());
+}
+
+/* ---------- Search / suggestions ---------- */
+
+function matches(sub, q) {
+  const hay = [sub.name, sub.id, sub.type, sub.category, ...(sub.aliases || [])]
+    .filter(Boolean).join(' ').toLowerCase();
+  return hay.includes(q);
+}
+
+let activeSuggestion = -1;
+
+function onSearchInput() {
+  const q = el('search').value.trim().toLowerCase();
+  if (!q) return hideSuggestions();
+  const hits = state.substances.filter((s) => matches(s, q)).slice(0, 8);
+  const box = el('suggestions');
+  if (!hits.length) {
+    box.innerHTML = '<div class="suggestion"><span class="s-alias">No match found</span></div>';
+    box.hidden = false;
+    return;
+  }
+  activeSuggestion = -1;
+  box.innerHTML = hits.map((s, i) => `
+    <div class="suggestion" data-id="${s.id}" data-i="${i}">
+      <span class="s-name">${escapeHtml(s.name)}</span>
+      <span class="s-alias">${escapeHtml(s.category || s.type || '')}</span>
+    </div>`).join('');
+  box.hidden = false;
+  box.querySelectorAll('.suggestion').forEach((node) => {
+    node.addEventListener('click', () => selectById(node.dataset.id));
+  });
+}
+
+function onSearchKey(e) {
+  const box = el('suggestions');
+  if (box.hidden) return;
+  const items = [...box.querySelectorAll('.suggestion[data-id]')];
+  if (e.key === 'ArrowDown') { e.preventDefault(); activeSuggestion = Math.min(activeSuggestion + 1, items.length - 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); activeSuggestion = Math.max(activeSuggestion - 1, 0); }
+  else if (e.key === 'Enter') {
+    const pick = items[activeSuggestion] || items[0];
+    if (pick) selectById(pick.dataset.id);
+    return;
+  } else if (e.key === 'Escape') { hideSuggestions(); return; }
+  items.forEach((n, i) => n.classList.toggle('active', i === activeSuggestion));
+}
+
+function hideSuggestions() {
+  el('suggestions').hidden = true;
+  activeSuggestion = -1;
+}
+
+/* ---------- Library ---------- */
+
+function renderBrowseList() {
+  const list = el('browseList');
+  list.innerHTML = state.substances.map((s) => `
+    <div class="browse-item" data-id="${s.id}">
+      <span class="b-name">${escapeHtml(s.name)}</span>
+      <span class="type-tag">${escapeHtml(s.type || '')}</span>
+    </div>`).join('');
+  list.querySelectorAll('.browse-item').forEach((node) => {
+    node.addEventListener('click', () => selectById(node.dataset.id));
+  });
+}
+
+function markActiveInLibrary(id) {
+  document.querySelectorAll('.browse-item').forEach((n) =>
+    n.classList.toggle('active', n.dataset.id === id));
+}
+
+/* ---------- Selection + rendering ---------- */
+
+function selectById(id) {
+  const sub = state.substances.find((s) => s.id === id);
+  if (!sub) return;
+  state.current = sub;
+  hideSuggestions();
+  el('search').value = sub.name;
+  markActiveInLibrary(id);
+
+  // Choose default mode/condition
+  const modes = sub.conditions.map((c) => c.mode);
+  state.currentMode = modes.includes(sub.defaultMode) ? sub.defaultMode : modes[0];
+
+  renderModeChips();
+  renderHeader();
+  renderCondition();
+}
+
+function renderModeChips() {
+  const sub = state.current;
+  const panel = el('modePanel');
+  if (sub.conditions.length <= 1) {
+    panel.hidden = false;
+  } else {
+    panel.hidden = false;
+  }
+  const wrap = el('modeChips');
+  wrap.innerHTML = sub.conditions.map((c) => `
+    <div class="chip ${c.mode === state.currentMode ? 'active' : ''}" data-mode="${escapeHtml(c.mode)}">
+      ${escapeHtml(c.label || c.mode)}
+    </div>`).join('');
+  wrap.querySelectorAll('.chip').forEach((node) => {
+    node.addEventListener('click', () => {
+      state.currentMode = node.dataset.mode;
+      renderModeChips();
+      renderCondition();
+    });
+  });
+}
+
+function renderHeader() {
+  const sub = state.current;
+  const aliases = (sub.aliases || []).slice(0, 6).join(' · ');
+  el('substanceTitle').innerHTML = `
+    <h2>${escapeHtml(sub.name)}</h2>
+    ${sub.category ? `<span class="cat-chip">${escapeHtml(sub.category)}</span>` : ''}
+    ${aliases ? `<p class="sub-aliases">Also: ${escapeHtml(aliases)}</p>` : ''}
+    ${sub.summary ? `<p class="sub-summary">${escapeHtml(sub.summary)}</p>` : ''}
+  `;
+}
+
+function currentCondition() {
+  return state.current.conditions.find((c) => c.mode === state.currentMode) || state.current.conditions[0];
+}
+
+function renderCondition() {
+  const sub = state.current;
+  const cond = currentCondition();
+  const band = ageToBand(el('age').value);
+  const gender = el('gender').value;
+
+  // Hide empty hint, show legend
+  el('emptyHint').style.display = 'none';
+  el('legend').hidden = false;
+
+  // 3D highlight
+  const affected = cond.affects.map((a) => ({
+    organ: a.organ,
+    severity: a.severity,
+    text: a.effect
+  }));
+  state.body.highlight(affected);
+
+  // Conclusion
+  renderConclusion(sub, cond, band, gender);
+}
+
+function renderConclusion(sub, cond, band, gender) {
+  const box = el('conclusion');
+  box.hidden = false;
+
+  const findings = cond.affects.map((a) => {
+    const typeLabel = EFFECT_TYPE_LABEL[a.effectType] || a.effectType || '';
+    const ageMod = a.ageModifiers && a.ageModifiers[band.key];
+    const genderMod = a.genderModifiers && gender && a.genderModifiers[gender];
+    const mods = [ageMod, genderMod].filter(Boolean);
+
+    return `
+      <div class="finding">
+        <div class="bar ${a.severity}"></div>
+        <div>
+          <div class="f-head">
+            <span class="f-organ">${escapeHtml(organName(a.organ))}</span>
+            ${a.system ? `<span class="tag">${escapeHtml(a.system)}</span>` : ''}
+            ${typeLabel ? `<span class="tag">${escapeHtml(typeLabel)}</span>` : ''}
+          </div>
+          <p class="f-effect">${escapeHtml(a.effect)}</p>
+          ${a.detail ? `<p class="f-detail">${escapeHtml(a.detail)}</p>` : ''}
+          ${mods.length ? `<p class="f-mod">${mods.map(escapeHtml).join(' ')}</p>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+
+  const organsAffected = [...new Set(cond.affects.map((a) => organName(a.organ)))];
+  const scenarioWord = (cond.label || cond.mode).toLowerCase();
+  const genderWord = gender ? `${gender} ` : '';
+  const headline = `In a ${genderWord}${band.label.toLowerCase()}, ${scenarioWord} of ${sub.name} primarily affects the ${listToSentence(organsAffected)}.`;
+
+  const refs = (cond.references || []);
+  const refsHtml = refs.length ? `
+    <div class="refs">
+      <h4>Scientific sources</h4>
+      <ul>
+        ${refs.map((r) => `<li><a href="${escapeAttr(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.title)}</a> — ${escapeHtml(r.source)}</li>`).join('')}
+      </ul>
+    </div>` : '';
+
+  box.innerHTML = `
+    <h3>Conclusion — ${escapeHtml(cond.label || cond.mode)}</h3>
+    <p class="scenario-note">${escapeHtml(headline)}${cond.description ? ' ' + escapeHtml(cond.description) : ''}</p>
+    ${findings}
+    ${refsHtml}
+    <p class="foot-note">${escapeHtml(sub.disclaimer || 'Educational summary of established physiology. Not a diagnosis, prognosis or treatment recommendation.')}</p>
+  `;
+}
+
+/* ---------- helpers ---------- */
+
+const ORGAN_DISPLAY = {
+  brain: 'Brain', eyes: 'Eyes', teeth: 'Teeth / gums', thyroid: 'Thyroid gland',
+  heart: 'Heart', lungs: 'Lungs', liver: 'Liver', stomach: 'Stomach',
+  pancreas: 'Pancreas', spleen: 'Spleen', kidneys: 'Kidneys', intestines: 'Intestines',
+  bladder: 'Bladder', reproductive: 'Reproductive organs', spine: 'Spine',
+  skin: 'Skin', muscles: 'Muscles', skeleton: 'Skeleton (bone)', blood: 'Blood',
+  nerves: 'Nervous system', hair: 'Hair'
+};
+function organName(key) { return ORGAN_DISPLAY[key] || key; }
+
+function listToSentence(arr) {
+  if (arr.length === 0) return 'body';
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return `${arr[0]} and ${arr[1]}`;
+  return `${arr.slice(0, -1).join(', ')} and ${arr[arr.length - 1]}`;
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function escapeAttr(s) { return escapeHtml(s); }
+
+window.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
