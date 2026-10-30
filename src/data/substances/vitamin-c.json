@@ -1,0 +1,61 @@
+{
+  "id": "vitamin-c",
+  "name": "Vitamin C (Ascorbic acid)",
+  "type": "vitamin",
+  "category": "Water-soluble vitamin",
+  "aliases": ["ascorbic acid", "ascorbate", "l-ascorbic acid"],
+  "casRN": "50-81-7",
+  "summary": "A water-soluble antioxidant and essential cofactor for prolyl/lysyl hydroxylases in collagen synthesis, carnitine and catecholamine production, and non-haem iron absorption.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency (scurvy)",
+      "description": "Without ascorbate, collagen cross-linking fails, weakening connective tissue, blood-vessel walls and bone matrix.",
+      "affects": [
+        {
+          "organ": "skin",
+          "system": "Integumentary system",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Perifollicular haemorrhage, corkscrew hairs, poor wound healing",
+          "detail": "Defective collagen makes capillaries fragile; classic signs are perifollicular bleeding, bruising (ecchymoses) and wounds that reopen or heal slowly.",
+          "ageModifiers": {
+            "infant": "Infantile scurvy (Barlow disease): irritability, pseudoparalysis from painful subperiosteal haemorrhage and tenderness of the limbs."
+          }
+        },
+        {
+          "organ": "teeth",
+          "system": "Dental / oral",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Swollen, bleeding gums and loosening teeth",
+          "detail": "Gingival collagen breaks down, producing spongy, haemorrhagic gums and eventual tooth loss."
+        },
+        {
+          "organ": "blood",
+          "system": "Haematologic",
+          "effectType": "disease",
+          "severity": "medium",
+          "effect": "Anaemia",
+          "detail": "Bleeding plus reduced iron absorption contributes to anaemia and fatigue."
+        },
+        {
+          "organ": "skeleton",
+          "system": "Skeletal system",
+          "effectType": "morphological",
+          "severity": "medium",
+          "effect": "Impaired bone matrix and joint bleeding",
+          "detail": "Osteoid collagen is defective; children may show growth-plate abnormalities and painful haemarthroses.",
+          "ageModifiers": {
+            "child": "Subperiosteal haemorrhage and disturbed endochondral ossification cause bone pain and reluctance to move."
+          }
+        }
+      ],
+      "references": [
+        { "title": "Vitamin C — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/VitaminC-HealthProfessional/" },
+        { "title": "Scurvy (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK493187/" }
+      ]
+    }
+  ]
+}

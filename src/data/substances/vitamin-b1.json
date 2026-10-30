@@ -1,0 +1,51 @@
+{
+  "id": "vitamin-b1",
+  "name": "Vitamin B1 (Thiamine)",
+  "type": "vitamin",
+  "category": "Water-soluble vitamin",
+  "aliases": ["thiamine", "thiamin", "aneurine", "b1"],
+  "casRN": "59-43-8",
+  "summary": "A water-soluble coenzyme (thiamine pyrophosphate) central to carbohydrate metabolism and ATP production; nervous and cardiac tissue depend on it heavily.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency (beriberi / Wernicke-Korsakoff)",
+      "description": "Impaired oxidative metabolism harms high-energy tissues: peripheral nerves, heart and brain.",
+      "affects": [
+        {
+          "organ": "nerves",
+          "system": "Peripheral nervous system",
+          "effectType": "physiological",
+          "severity": "high",
+          "effect": "Dry beriberi — symmetric peripheral neuropathy",
+          "detail": "Length-dependent sensorimotor neuropathy causes tingling, burning feet, weakness and loss of reflexes."
+        },
+        {
+          "organ": "heart",
+          "system": "Cardiovascular system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Wet beriberi — high-output heart failure",
+          "detail": "Peripheral vasodilation and myocardial dysfunction cause oedema, breathlessness and high-output cardiac failure."
+        },
+        {
+          "organ": "brain",
+          "system": "Central nervous system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Wernicke encephalopathy / Korsakoff syndrome",
+          "detail": "Acute triad of confusion, ophthalmoplegia and ataxia; untreated it progresses to the irreversible amnesia of Korsakoff syndrome.",
+          "ageModifiers": {
+            "adult": "Classically precipitated by chronic alcohol use or malnutrition; give thiamine before glucose to avoid precipitating Wernicke encephalopathy.",
+            "infant": "Infantile beriberi can occur in breastfed infants of thiamine-deficient mothers, with acute cardiac and neurological collapse."
+          }
+        }
+      ],
+      "references": [
+        { "title": "Thiamin — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/Thiamin-HealthProfessional/" },
+        { "title": "Thiamine Deficiency (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK482360/" }
+      ]
+    }
+  ]
+}

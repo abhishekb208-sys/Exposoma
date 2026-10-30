@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChemBody Explorer</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../node_modules/three/build/three.module.js",
+        "three/addons/": "../node_modules/three/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">⬡</div>
+      <div>
+        <h1>ChemBody Explorer</h1>
+        <p class="tagline">How a chemical, vitamin, mineral or biomolecule changes the human body</p>
+      </div>
+    </div>
+    <div class="disclaimer-badge" title="Educational tool">Educational · not medical advice</div>
+  </header>
+
+  <main class="layout">
+    <!-- Controls -->
+    <aside class="sidebar">
+      <section class="panel">
+        <label class="field-label" for="search">Search substance</label>
+        <div class="search-wrap">
+          <input id="search" type="text" autocomplete="off" placeholder="e.g. Vitamin D, Iron, Lead, B12…" />
+          <div id="suggestions" class="suggestions" hidden></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="age">Age</label>
+            <div class="age-input">
+              <input id="age" type="number" min="0" max="120" value="30" />
+              <span id="ageBand" class="age-band">Adult</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="gender">Gender</label>
+            <select id="gender">
+              <option value="">Unspecified</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="modePanel" hidden>
+        <label class="field-label">Scenario</label>
+        <div id="modeChips" class="chips"></div>
+      </section>
+
+      <section class="panel grow">
+        <label class="field-label">Library <span id="libCount" class="count"></span></label>
+        <div id="browseList" class="browse-list"></div>
+      </section>
+    </aside>
+
+    <!-- Visualisation + conclusion -->
+    <section class="stage">
+      <div class="stage-head">
+        <div id="substanceTitle" class="substance-title">
+          <h2>Select a substance</h2>
+          <p class="muted">Pick from the library or search, then set age and gender.</p>
+        </div>
+        <button id="resetView" class="ghost-btn" title="Reset camera">⟲ View</button>
+      </div>
+
+      <div id="viewport" class="viewport">
+        <div id="legend" class="legend" hidden>
+          <span><i class="dot high"></i>High impact</span>
+          <span><i class="dot medium"></i>Moderate</span>
+          <span><i class="dot low"></i>Low</span>
+          <span class="hint">drag to rotate · scroll to zoom</span>
+        </div>
+        <div id="emptyHint" class="empty-hint">
+          <div class="pulse">⬡</div>
+          <p>A transparent 3D body will appear here with the affected organs highlighted.</p>
+        </div>
+      </div>
+
+      <div id="conclusion" class="conclusion" hidden></div>
+    </section>
+  </main>
+
+  <div id="loadErrors" class="load-errors" hidden></div>
+
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>

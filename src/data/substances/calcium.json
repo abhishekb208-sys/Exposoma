@@ -1,0 +1,53 @@
+{
+  "id": "calcium",
+  "name": "Calcium (Ca)",
+  "type": "mineral",
+  "category": "Essential macromineral",
+  "aliases": ["ca", "calcium carbonate", "calcium citrate"],
+  "casRN": "7440-70-2",
+  "summary": "The most abundant mineral in the body; structural in bone and teeth and essential for muscle contraction, nerve conduction, clotting and enzyme function.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency (hypocalcaemia / dietary)",
+      "description": "Low calcium availability impairs bone mineralisation and raises neuromuscular excitability.",
+      "affects": [
+        {
+          "organ": "skeleton",
+          "system": "Skeletal system",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Reduced bone density; osteoporosis and fracture risk",
+          "detail": "Sustained low intake draws calcium from bone, lowering bone mineral density and increasing fracture risk.",
+          "ageModifiers": {
+            "child": "Inadequate calcium plus vitamin D contributes to rickets and poor peak bone mass.",
+            "elderly": "Accelerates age-related bone loss and fracture risk."
+          },
+          "genderModifiers": {
+            "female": "Post-menopausal oestrogen loss accelerates calcium loss from bone, raising osteoporosis risk."
+          }
+        },
+        {
+          "organ": "muscles",
+          "system": "Neuromuscular",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Tetany, cramps and spasms",
+          "detail": "Low ionised calcium increases neuromuscular excitability, causing cramps, carpopedal spasm and tetany (Chvostek/Trousseau signs)."
+        },
+        {
+          "organ": "heart",
+          "system": "Cardiovascular system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "QT prolongation / arrhythmia",
+          "detail": "Severe hypocalcaemia prolongs the cardiac QT interval and can cause arrhythmia."
+        }
+      ],
+      "references": [
+        { "title": "Calcium — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/Calcium-HealthProfessional/" }
+      ]
+    }
+  ]
+}

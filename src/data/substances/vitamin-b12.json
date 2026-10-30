@@ -1,0 +1,58 @@
+{
+  "id": "vitamin-b12",
+  "name": "Vitamin B12 (Cobalamin)",
+  "type": "vitamin",
+  "category": "Water-soluble vitamin",
+  "aliases": ["cobalamin", "cyanocobalamin", "methylcobalamin", "b12"],
+  "casRN": "68-19-9",
+  "summary": "A cobalt-containing vitamin required for DNA synthesis, red-cell maturation and myelin maintenance; a cofactor for methionine synthase and methylmalonyl-CoA mutase.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency",
+      "description": "Impairs DNA synthesis (megaloblastic anaemia) and myelin integrity (subacute combined degeneration).",
+      "affects": [
+        {
+          "organ": "blood",
+          "system": "Haematologic",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Megaloblastic (pernicious) anaemia",
+          "detail": "Defective DNA synthesis produces large, immature red cells and hypersegmented neutrophils, causing fatigue, pallor and breathlessness."
+        },
+        {
+          "organ": "nerves",
+          "system": "Nervous system",
+          "effectType": "anatomical",
+          "severity": "high",
+          "effect": "Subacute combined degeneration of the spinal cord",
+          "detail": "Demyelination of the dorsal columns and corticospinal tracts causes numbness, tingling, loss of proprioception, unsteady gait and weakness — potentially irreversible if untreated.",
+          "ageModifiers": {
+            "elderly": "Common and easily missed in older adults; may present as cognitive decline or gait disturbance."
+          }
+        },
+        {
+          "organ": "brain",
+          "system": "Nervous system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Cognitive changes, memory loss, mood disturbance",
+          "detail": "Deficiency can cause irritability, depression and reversible cognitive impairment."
+        },
+        {
+          "organ": "stomach",
+          "system": "Digestive system",
+          "effectType": "physiological",
+          "severity": "low",
+          "effect": "Glossitis; often linked to loss of intrinsic factor",
+          "detail": "A smooth, sore (beefy-red) tongue is common; autoimmune atrophic gastritis removes intrinsic factor, the usual cause of pernicious anaemia."
+        }
+      ],
+      "references": [
+        { "title": "Vitamin B12 — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/" },
+        { "title": "Vitamin B12 Deficiency (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK441923/" }
+      ]
+    }
+  ]
+}

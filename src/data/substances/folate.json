@@ -1,0 +1,50 @@
+{
+  "id": "folate",
+  "name": "Folate (Vitamin B9)",
+  "type": "vitamin",
+  "category": "Water-soluble vitamin",
+  "aliases": ["folic acid", "vitamin b9", "folacin", "b9", "5-mthf"],
+  "casRN": "59-30-3",
+  "summary": "A water-soluble vitamin essential for one-carbon metabolism, DNA/RNA synthesis and red-cell production; critical in early pregnancy for neural tube closure.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency",
+      "description": "Impairs DNA synthesis (megaloblastic anaemia) and, in early pregnancy, neural tube closure in the fetus.",
+      "affects": [
+        {
+          "organ": "blood",
+          "system": "Haematologic",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Megaloblastic anaemia",
+          "detail": "Like B12 deficiency, impaired DNA synthesis enlarges red cells; unlike B12, folate deficiency does not cause neurological demyelination."
+        },
+        {
+          "organ": "reproductive",
+          "system": "Reproductive / developmental",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Fetal neural tube defects (spina bifida, anencephaly)",
+          "detail": "Deficiency around conception raises the risk of failed neural tube closure in the embryo.",
+          "genderModifiers": {
+            "female": "People who could become pregnant are advised to take ~400 micrograms of folic acid daily before and in early pregnancy to cut neural tube defect risk."
+          }
+        },
+        {
+          "organ": "nerves",
+          "system": "Developing nervous system",
+          "effectType": "anatomical",
+          "severity": "high",
+          "effect": "Defective neural tube / spinal cord formation (fetal)",
+          "detail": "The neural tube forms the brain and spinal cord; incomplete closure in the first month of gestation produces structural CNS defects."
+        }
+      ],
+      "references": [
+        { "title": "Folate — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/Folate-HealthProfessional/" },
+        { "title": "Folic acid for the prevention of neural tube defects", "source": "CDC", "url": "https://www.cdc.gov/folic-acid/about/index.html" }
+      ]
+    }
+  ]
+}

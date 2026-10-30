@@ -1,0 +1,95 @@
+{
+  "id": "iron",
+  "name": "Iron (Fe)",
+  "type": "mineral",
+  "category": "Essential trace mineral",
+  "aliases": ["fe", "ferrous", "ferric", "haem iron", "ferritin"],
+  "casRN": "7439-89-6",
+  "summary": "An essential mineral central to haemoglobin and myoglobin oxygen transport, and to many enzymes. Both deficiency and overload cause disease.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency",
+      "description": "The most common nutritional deficiency worldwide; limits haemoglobin synthesis.",
+      "affects": [
+        {
+          "organ": "blood",
+          "system": "Haematologic",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Microcytic hypochromic anaemia",
+          "detail": "Low iron limits haem synthesis, producing small, pale red cells with fatigue, pallor and reduced exercise tolerance.",
+          "genderModifiers": {
+            "female": "Menstrual blood loss and pregnancy raise iron demand, making deficiency notably more common in menstruating and pregnant people."
+          },
+          "ageModifiers": {
+            "infant": "Rapid growth and low iron stores make infants and toddlers especially vulnerable; deficiency can impair neurodevelopment.",
+            "child": "Iron deficiency in childhood is linked to impaired cognition and attention."
+          }
+        },
+        {
+          "organ": "heart",
+          "system": "Cardiovascular system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Tachycardia and, if severe, high-output strain",
+          "detail": "To compensate for low oxygen-carrying capacity the heart rate rises; chronic severe anaemia strains the heart."
+        },
+        {
+          "organ": "nerves",
+          "system": "Nervous system",
+          "effectType": "physiological",
+          "severity": "low",
+          "effect": "Restless legs, impaired cognition",
+          "detail": "Iron is a cofactor for dopamine synthesis; deficiency is associated with restless legs syndrome and reduced concentration."
+        }
+      ],
+      "references": [
+        { "title": "Iron — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/Iron-HealthProfessional/" }
+      ]
+    },
+    {
+      "mode": "excess",
+      "label": "Overload (haemochromatosis)",
+      "description": "Chronic iron overload deposits iron in parenchymal organs, generating oxidative damage.",
+      "affects": [
+        {
+          "organ": "liver",
+          "system": "Hepatobiliary system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Cirrhosis and hepatocellular carcinoma risk",
+          "detail": "Iron accumulation in hepatocytes drives fibrosis, cirrhosis and increased liver-cancer risk."
+        },
+        {
+          "organ": "pancreas",
+          "system": "Endocrine / digestive",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Diabetes mellitus ('bronze diabetes')",
+          "detail": "Iron deposition in pancreatic islets impairs insulin secretion, causing diabetes."
+        },
+        {
+          "organ": "heart",
+          "system": "Cardiovascular system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Cardiomyopathy and arrhythmia",
+          "detail": "Myocardial iron loading causes dilated/restrictive cardiomyopathy and conduction disturbance."
+        },
+        {
+          "organ": "skin",
+          "system": "Integumentary system",
+          "effectType": "morphological",
+          "severity": "low",
+          "effect": "Bronze / grey skin pigmentation",
+          "detail": "Iron and melanin deposition gives a characteristic bronze skin discolouration."
+        }
+      ],
+      "references": [
+        { "title": "Hemochromatosis (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK430862/" }
+      ]
+    }
+  ]
+}
