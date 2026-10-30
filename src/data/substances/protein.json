@@ -1,0 +1,61 @@
+{
+  "id": "dietary-protein",
+  "name": "Dietary Protein",
+  "type": "protein",
+  "category": "Macronutrient",
+  "aliases": ["protein", "amino acids", "albumin"],
+  "summary": "Dietary protein supplies amino acids for tissue structure, enzymes, transport proteins, immune molecules and oncotic pressure. Severe deficiency produces protein-energy malnutrition.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency (protein-energy malnutrition)",
+      "description": "Inadequate protein (kwashiorkor) or combined protein-energy lack (marasmus) damages multiple systems.",
+      "affects": [
+        {
+          "organ": "liver",
+          "system": "Hepatobiliary system",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Fatty liver (hepatic steatosis) in kwashiorkor",
+          "detail": "Impaired lipoprotein export causes fat accumulation and an enlarged, soft liver."
+        },
+        {
+          "organ": "skin",
+          "system": "Integumentary system",
+          "effectType": "morphological",
+          "severity": "medium",
+          "effect": "Oedema, flaky-paint dermatosis, hair depigmentation",
+          "detail": "Low plasma albumin lowers oncotic pressure, causing pitting oedema and ascites; skin and hair changes ('flag sign') appear in kwashiorkor.",
+          "ageModifiers": {
+            "child": "Kwashiorkor typically appears in young children after weaning: oedema, irritability, a distended belly and a reddish tint to the hair."
+          }
+        },
+        {
+          "organ": "muscles",
+          "system": "Muscular system",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Muscle wasting (marasmus)",
+          "detail": "The body catabolises muscle for amino acids and energy, causing severe wasting and loss of subcutaneous fat.",
+          "ageModifiers": {
+            "infant": "Marasmus in infancy produces extreme thinness, an aged ('old man') face and growth failure.",
+            "elderly": "Sarcopenia from inadequate protein worsens frailty, falls and recovery from illness."
+          }
+        },
+        {
+          "organ": "blood",
+          "system": "Immune / haematologic",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Impaired immunity and anaemia",
+          "detail": "Reduced synthesis of immune proteins and haemoglobin raises infection risk and contributes to anaemia."
+        }
+      ],
+      "references": [
+        { "title": "Kwashiorkor (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK507876/" },
+        { "title": "Malnutrition", "source": "World Health Organization", "url": "https://www.who.int/news-room/fact-sheets/detail/malnutrition" }
+      ]
+    }
+  ]
+}

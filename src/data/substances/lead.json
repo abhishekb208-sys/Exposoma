@@ -1,0 +1,69 @@
+{
+  "id": "lead",
+  "name": "Lead (Pb)",
+  "type": "metal",
+  "category": "Toxic heavy metal",
+  "aliases": ["pb", "plumbum", "lead acetate", "tetraethyl lead"],
+  "casRN": "7439-92-1",
+  "summary": "A toxic heavy metal with no safe exposure level. It interferes with enzymes (notably in haem synthesis), mimics calcium, and is especially harmful to the developing brain.",
+  "defaultMode": "toxicity",
+  "conditions": [
+    {
+      "mode": "toxicity",
+      "label": "Toxicity / exposure",
+      "description": "Lead disrupts haem synthesis and neuronal signalling and deposits in bone; children absorb and are harmed by it far more than adults.",
+      "affects": [
+        {
+          "organ": "brain",
+          "system": "Central nervous system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Encephalopathy and loss of IQ / cognition",
+          "detail": "Lead disrupts neurotransmission and synaptic pruning. High levels cause encephalopathy, seizures and coma; even low chronic exposure lowers IQ and attention.",
+          "ageModifiers": {
+            "infant": "The developing brain is exquisitely sensitive; there is no identified safe blood-lead level in children.",
+            "child": "Causes irreversible deficits in IQ, attention and behaviour, plus developmental delay.",
+            "adult": "Chronic exposure causes headache, memory loss, peripheral neuropathy (wrist/foot drop) and mood change."
+          }
+        },
+        {
+          "organ": "blood",
+          "system": "Haematologic",
+          "effectType": "biochemical",
+          "severity": "high",
+          "effect": "Microcytic anaemia with basophilic stippling",
+          "detail": "Lead inhibits ALA dehydratase and ferrochelatase in haem synthesis, causing anaemia and basophilic stippling of red cells."
+        },
+        {
+          "organ": "kidneys",
+          "system": "Urinary system",
+          "effectType": "disease",
+          "severity": "medium",
+          "effect": "Nephropathy",
+          "detail": "Chronic exposure damages proximal tubules (Fanconi-like) and, over years, causes interstitial nephritis and chronic kidney disease."
+        },
+        {
+          "organ": "skeleton",
+          "system": "Skeletal system",
+          "effectType": "anatomical",
+          "severity": "medium",
+          "effect": "Bone storage; 'lead lines'",
+          "detail": "Lead mimics calcium and is stored in bone for decades; dense metaphyseal 'lead lines' are visible on children's X-rays."
+        },
+        {
+          "organ": "stomach",
+          "system": "Digestive system",
+          "effectType": "physiological",
+          "severity": "low",
+          "effect": "Lead colic and constipation",
+          "detail": "Acute exposure causes crampy abdominal pain ('lead colic'), anorexia and constipation."
+        }
+      ],
+      "references": [
+        { "title": "Lead poisoning", "source": "World Health Organization", "url": "https://www.who.int/news-room/fact-sheets/detail/lead-poisoning-and-health" },
+        { "title": "Lead Toxicity (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK562211/" },
+        { "title": "Lead — Comparative Toxicogenomics Database", "source": "CTD", "url": "https://ctdbase.org/detail.go?type=chem&acc=D007854" }
+      ]
+    }
+  ]
+}

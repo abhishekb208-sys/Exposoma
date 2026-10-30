@@ -1,0 +1,54 @@
+{
+  "id": "iodine",
+  "name": "Iodine (I)",
+  "type": "mineral",
+  "category": "Essential trace mineral",
+  "aliases": ["iodide", "i", "iodine-131"],
+  "casRN": "7553-56-2",
+  "summary": "An essential component of thyroid hormones (T3, T4), which set basal metabolic rate and are critical for fetal and infant brain development.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency",
+      "description": "Limits thyroid hormone synthesis, causing goitre and hypothyroidism; the leading preventable cause of intellectual disability worldwide.",
+      "affects": [
+        {
+          "organ": "thyroid",
+          "system": "Endocrine system",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Goitre (thyroid enlargement)",
+          "detail": "Low iodine reduces thyroid hormone output; rising TSH stimulates the gland to enlarge into a visible goitre."
+        },
+        {
+          "organ": "brain",
+          "system": "Nervous system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Impaired neurodevelopment (cretinism in severe fetal deficiency)",
+          "detail": "Thyroid hormone is essential for fetal and infant brain development; severe deficiency causes irreversible intellectual disability.",
+          "ageModifiers": {
+            "infant": "Congenital/severe deficiency causes cretinism: intellectual disability, deaf-mutism and stunted growth.",
+            "adult": "Hypothyroidism: fatigue, weight gain, cold intolerance, slowed cognition and depression."
+          },
+          "genderModifiers": {
+            "female": "Iodine requirements rise in pregnancy and lactation; maternal deficiency harms fetal brain development."
+          }
+        },
+        {
+          "organ": "heart",
+          "system": "Cardiovascular system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Bradycardia and low metabolic rate",
+          "detail": "Reduced thyroid hormone slows heart rate and overall metabolism."
+        }
+      ],
+      "references": [
+        { "title": "Iodine — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/Iodine-HealthProfessional/" },
+        { "title": "Iodine deficiency disorders", "source": "World Health Organization", "url": "https://www.who.int/data/nutrition/nlis/info/iodine-deficiency" }
+      ]
+    }
+  ]
+}

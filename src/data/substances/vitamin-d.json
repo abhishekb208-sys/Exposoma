@@ -1,0 +1,92 @@
+{
+  "id": "vitamin-d",
+  "name": "Vitamin D (Cholecalciferol)",
+  "type": "vitamin",
+  "category": "Fat-soluble vitamin",
+  "aliases": ["cholecalciferol", "vitamin d3", "calciferol", "ergocalciferol", "vitamin d2", "25-hydroxyvitamin D", "sunshine vitamin"],
+  "casRN": "67-97-0",
+  "summary": "A fat-soluble secosteroid that regulates intestinal calcium and phosphate absorption and bone mineralisation. Synthesised in skin on UVB exposure and obtained from diet.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency",
+      "description": "Low vitamin D impairs calcium/phosphate homeostasis, causing defective bone mineralisation and secondary hyperparathyroidism.",
+      "affects": [
+        {
+          "organ": "skeleton",
+          "system": "Skeletal system",
+          "effectType": "morphological",
+          "severity": "high",
+          "effect": "Defective bone mineralisation (rickets / osteomalacia)",
+          "detail": "Inadequate calcium-phosphate deposition softens the bone matrix (osteoid). Weight-bearing bones deform and fracture risk rises.",
+          "ageModifiers": {
+            "infant": "Growth-plate widening, craniotabes (soft skull), delayed fontanelle closure and bowing of the legs as weight-bearing begins.",
+            "child": "Rickets: bowed legs or knock-knees, widened wrists, rachitic rosary at the costochondral junctions and delayed growth.",
+            "adolescent": "Bone pain and reduced peak bone mass accrual during the growth spurt.",
+            "adult": "Osteomalacia: diffuse bone pain, proximal muscle weakness and pseudofractures (Looser zones).",
+            "elderly": "Accelerated osteoporosis and markedly higher risk of hip and vertebral fractures."
+          }
+        },
+        {
+          "organ": "muscles",
+          "system": "Muscular system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Proximal muscle weakness",
+          "detail": "Low vitamin D status is linked to proximal myopathy, impaired contractility, a waddling gait and increased falls.",
+          "ageModifiers": {
+            "elderly": "Weakness compounds fall and fracture risk; supplementation can reduce falls in deficient older adults."
+          }
+        },
+        {
+          "organ": "teeth",
+          "system": "Dental",
+          "effectType": "morphological",
+          "severity": "low",
+          "effect": "Enamel hypoplasia / delayed dentition",
+          "detail": "Impaired mineralisation can affect enamel formation and delay tooth eruption in children."
+        }
+      ],
+      "references": [
+        { "title": "Vitamin D — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/" },
+        { "title": "Vitamin D Deficiency (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK532266/" }
+      ]
+    },
+    {
+      "mode": "toxicity",
+      "label": "Toxicity (hypervitaminosis D)",
+      "description": "Excess vitamin D (almost always from over-supplementation) drives hypercalcaemia.",
+      "affects": [
+        {
+          "organ": "kidneys",
+          "system": "Urinary system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Hypercalcaemia, nephrocalcinosis and kidney stones",
+          "detail": "Sustained hypercalcaemia causes calcium deposition in renal tissue, polyuria, dehydration and acute kidney injury."
+        },
+        {
+          "organ": "heart",
+          "system": "Cardiovascular system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Arrhythmia from hypercalcaemia",
+          "detail": "Elevated serum calcium shortens the QT interval and can provoke arrhythmias."
+        },
+        {
+          "organ": "brain",
+          "system": "Nervous system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Confusion, lethargy",
+          "detail": "Hypercalcaemia depresses the central nervous system, producing lethargy, confusion and in severe cases stupor."
+        }
+      ],
+      "references": [
+        { "title": "Vitamin D — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/VitaminD-HealthProfessional/" }
+      ]
+    }
+  ],
+  "disclaimer": "Educational summary of well-established physiology. Not a diagnosis or treatment plan."
+}

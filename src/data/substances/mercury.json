@@ -1,0 +1,63 @@
+{
+  "id": "mercury",
+  "name": "Mercury (Hg)",
+  "type": "metal",
+  "category": "Toxic heavy metal",
+  "aliases": ["hg", "methylmercury", "quicksilver", "mercuric chloride", "elemental mercury"],
+  "casRN": "7439-97-6",
+  "summary": "A toxic heavy metal. Organic methylmercury (from contaminated fish) targets the nervous system and crosses the placenta; inhaled elemental mercury vapour harms the lungs and brain; mercuric salts damage the kidneys.",
+  "defaultMode": "toxicity",
+  "conditions": [
+    {
+      "mode": "toxicity",
+      "label": "Toxicity / exposure",
+      "description": "Mercury binds sulphydryl groups and disrupts the nervous system, kidneys and, with vapour, the lungs.",
+      "affects": [
+        {
+          "organ": "brain",
+          "system": "Central nervous system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Neurotoxicity — ataxia, tremor, paraesthesia, visual field loss",
+          "detail": "Methylmercury concentrates in the brain, causing sensory disturbance, ataxia, tremor, constricted visual fields and hearing loss (Minamata disease).",
+          "ageModifiers": {
+            "infant": "Prenatal methylmercury exposure disrupts neuronal migration, causing cerebral palsy-like syndromes and developmental delay.",
+            "adult": "Chronic vapour exposure causes tremor, erethism (irritability, shyness), insomnia and memory loss ('mad hatter')."
+          },
+          "genderModifiers": {
+            "female": "Methylmercury crosses the placenta and concentrates in the fetus; pregnant people are advised to limit high-mercury fish."
+          }
+        },
+        {
+          "organ": "kidneys",
+          "system": "Urinary system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Tubular necrosis / nephrotic syndrome",
+          "detail": "Inorganic mercuric salts accumulate in the proximal tubule, causing acute tubular necrosis or membranous nephropathy."
+        },
+        {
+          "organ": "lungs",
+          "system": "Respiratory system",
+          "effectType": "disease",
+          "severity": "medium",
+          "effect": "Chemical pneumonitis (vapour inhalation)",
+          "detail": "Acute inhalation of elemental mercury vapour causes cough, breathlessness and chemical pneumonitis."
+        },
+        {
+          "organ": "nerves",
+          "system": "Peripheral nervous system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Peripheral paraesthesia",
+          "detail": "Tingling around the mouth, hands and feet is an early sign of methylmercury toxicity."
+        }
+      ],
+      "references": [
+        { "title": "Mercury and health", "source": "World Health Organization", "url": "https://www.who.int/news-room/fact-sheets/detail/mercury-and-health" },
+        { "title": "Mercury Toxicity (StatPearls)", "source": "NCBI Bookshelf", "url": "https://www.ncbi.nlm.nih.gov/books/NBK499935/" },
+        { "title": "Mercury — Comparative Toxicogenomics Database", "source": "CTD", "url": "https://ctdbase.org/detail.go?type=chem&acc=D008628" }
+      ]
+    }
+  ]
+}

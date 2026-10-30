@@ -1,0 +1,87 @@
+{
+  "id": "vitamin-a",
+  "name": "Vitamin A (Retinol)",
+  "type": "vitamin",
+  "category": "Fat-soluble vitamin",
+  "aliases": ["retinol", "retinoic acid", "retinal", "retinoid", "beta-carotene"],
+  "casRN": "68-26-8",
+  "summary": "A fat-soluble vitamin essential for the visual cycle (rhodopsin), epithelial differentiation, immune function and embryonic development.",
+  "defaultMode": "deficiency",
+  "conditions": [
+    {
+      "mode": "deficiency",
+      "label": "Deficiency",
+      "description": "A leading cause of preventable childhood blindness worldwide; impairs the retinal visual cycle and epithelial integrity.",
+      "affects": [
+        {
+          "organ": "eyes",
+          "system": "Visual system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Night blindness, xerophthalmia, Bitot spots, keratomalacia",
+          "detail": "Reduced rhodopsin regeneration causes night blindness first; progressive conjunctival/corneal drying (xerophthalmia) can end in corneal melting (keratomalacia) and irreversible blindness.",
+          "ageModifiers": {
+            "child": "Young children are most vulnerable; vitamin A deficiency is a major cause of preventable childhood blindness and raises measles mortality."
+          }
+        },
+        {
+          "organ": "skin",
+          "system": "Integumentary system",
+          "effectType": "morphological",
+          "severity": "medium",
+          "effect": "Follicular hyperkeratosis and dry skin",
+          "detail": "Loss of epithelial differentiation causes rough, dry skin with keratin plugs around follicles."
+        },
+        {
+          "organ": "lungs",
+          "system": "Immune / respiratory",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Impaired mucosal immunity, more respiratory infection",
+          "detail": "Compromised epithelial barriers and immune function increase susceptibility to respiratory and gastrointestinal infection."
+        }
+      ],
+      "references": [
+        { "title": "Vitamin A and Carotenoids — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/" },
+        { "title": "Vitamin A deficiency", "source": "World Health Organization", "url": "https://www.who.int/data/nutrition/nlis/info/vitamin-a-deficiency" }
+      ]
+    },
+    {
+      "mode": "toxicity",
+      "label": "Toxicity (hypervitaminosis A)",
+      "description": "Excess preformed retinol is hepatotoxic and teratogenic.",
+      "affects": [
+        {
+          "organ": "liver",
+          "system": "Hepatobiliary system",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Hepatotoxicity, fibrosis",
+          "detail": "Chronic excess accumulates in hepatic stellate cells, driving fibrosis and portal hypertension."
+        },
+        {
+          "organ": "brain",
+          "system": "Nervous system",
+          "effectType": "physiological",
+          "severity": "medium",
+          "effect": "Raised intracranial pressure (pseudotumour cerebri)",
+          "detail": "Acute excess can raise intracranial pressure, causing headache, blurred vision and, in infants, a bulging fontanelle."
+        },
+        {
+          "organ": "reproductive",
+          "system": "Reproductive / developmental",
+          "effectType": "disease",
+          "severity": "high",
+          "effect": "Teratogenicity",
+          "detail": "High-dose retinoids in early pregnancy cause craniofacial, cardiac and CNS birth defects.",
+          "genderModifiers": {
+            "female": "In people who are or may become pregnant, high-dose vitamin A / retinoids are strongly teratogenic and must be avoided."
+          }
+        }
+      ],
+      "references": [
+        { "title": "Vitamin A and Carotenoids — Health Professional Fact Sheet", "source": "NIH Office of Dietary Supplements", "url": "https://ods.od.nih.gov/factsheets/VitaminA-HealthProfessional/" }
+      ]
+    }
+  ]
+}

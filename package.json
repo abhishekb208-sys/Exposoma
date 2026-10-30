@@ -1,0 +1,46 @@
+{
+  "name": "chembody-explorer",
+  "productName": "ChemBody Explorer",
+  "version": "0.1.0",
+  "description": "Search a chemical, vitamin, mineral or biomolecule and see its morphological, anatomical, physiological or disease impact on a transparent 3D human body, modulated by age and gender.",
+  "author": "ChemBody Explorer",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "validate": "node scripts/validate-data.js",
+    "dist:win": "electron-builder --win --x64",
+    "dist:all": "electron-builder -mwl"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "build": {
+    "appId": "com.chembody.explorer",
+    "productName": "ChemBody Explorer",
+    "files": [
+      "electron/**/*",
+      "src/**/*",
+      "node_modules/three/build/three.module.js",
+      "node_modules/three/examples/jsm/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "artifactName": "ChemBodyExplorer-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}
